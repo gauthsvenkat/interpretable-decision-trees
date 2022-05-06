@@ -1,0 +1,41 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 1 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: dqn.py
+--------------------------------------------------------------------------------
+dqn.py:37:22: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'dqn.py'
+ outputting to 'temp_converted.py'
+--------------------------------------------------------------------------------
+
+27:20: INFO: Renamed 'tf.Session' to 'tf.compat.v1.Session'
+30:17: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+32:28: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+35:37: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+36:37: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+37:22: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+37:22: INFO: Renamed 'tf.get_variable' to 'tf.compat.v1.get_variable'
+37:61: INFO: tf.constant_initializer requires manual check. Initializers no longer have the dtype argument in the constructor or partition_info argument in the __call__ method.
+The calls have been converted to compat.v1 for safety (even though they may already have been correct).
+37:61: INFO: Renamed 'tf.constant_initializer' to 'tf.compat.v1.constant_initializer'
+40:21: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+45:25: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+54:25: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+63:40: INFO: Added keywords to args of function 'tf.argmax'
+66:29: INFO: Added keywords to args of function 'tf.shape'
+67:33: INFO: Renamed 'tf.random_uniform' to 'tf.random.uniform'
+68:31: INFO: Renamed 'tf.random_uniform' to 'tf.random.uniform'
+69:37: INFO: Renamed 'tf.where' to 'tf.compat.v1.where'
+72:38: INFO: Added keywords to args of function 'tf.cond'
+73:50: INFO: Added keywords to args of function 'tf.cond'
+76:12: INFO: Renamed 'tf.train.Saver' to 'tf.compat.v1.train.Saver'
+--------------------------------------------------------------------------------
+
