@@ -122,7 +122,7 @@ class MaxAndSkipEnv(gym.Wrapper):
             if done:
                 break
 
-        max_frame = np.max(np.stack(self._obs_buffer), axis=0)
+        max_frame = np.max(np.stack(self.obs_buffer), axis=0)
 
         return max_frame, total_reward, done, info
 
