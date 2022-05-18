@@ -21,7 +21,7 @@ def play(env, policy):
 
 
 def main():
-    env_name = 'MountainCar-v0'
+    env_name = 'Acrobot-v1'
     env = gym.make(env_name)
     env.reset()
 
