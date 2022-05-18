@@ -14,6 +14,8 @@ Viper code adapted from [https://github.com/obastani/viper](https://github.com/o
 
 ### Docker Images
 
+To get started, you want to build the docker image and use the command to run the script in the docker image (i.e. the first and last step)
+
 Build docker image (CPU):
 ```
 ./scripts/build_docker.sh
