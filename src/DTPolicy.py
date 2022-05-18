@@ -43,13 +43,13 @@ class DTPolicy:
 
     def save_dt_policy(self, path):
         if not path.parent.exists():
-            os.makedirs(path.parent, exist_ok=True)
-        with open(path, 'wb') as f:
+            os.makedirs(str(path.parent), exist_ok=True)
+        with open(str(path), 'wb') as f:
             pk.dump(self, f)
 
     def save_dt_policy_viz(self, path):
         if not path.parent.exists():
-            os.makedirs(path.parent, exist_ok=True)
+            os.makedirs(str(path.parent), exist_ok=True)
 
         dot_data = export_graphviz(self.tree, filled=True, rounded=True, impurity=False, class_names=True)
         graph = pydotplus.graph_from_dot_data(dot_data)

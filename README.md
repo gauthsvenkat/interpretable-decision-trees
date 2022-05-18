@@ -15,6 +15,8 @@ Viper code adapted from [https://github.com/obastani/viper](https://github.com/o
 ### Docker Images
 
 To get started, you want to build the docker image and use the command to run the script in the docker image (i.e. the first and last step)
+Please note that the docker image is configured to run in daemon mode, so to check logs you need to use docker logs {container name}
+Also note that since it is running in daemon mode, you can ssh into the container using docker exec -it {container name} /bin/bash - the source code is located at /root/code/rl_zoo
 
 Build docker image (CPU):
 ```
