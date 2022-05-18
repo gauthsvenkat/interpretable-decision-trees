@@ -182,8 +182,7 @@ class ViperEnvConfig:
 
 def get_student(env, oracle, train=True, save_path_specifier=""):
     dt_save_folder = Path('student', env.unwrapped.spec.id)
-    os.makedirs(dt_save_folder, exist_ok=True)
-
+    os.makedirs(str(dt_save_folder), exist_ok=True)
     config = ViperEnvConfig.get_viper_config(env.unwrapped.spec.id)
 
     if train:
