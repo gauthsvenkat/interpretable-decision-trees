@@ -4,10 +4,10 @@ from pathlib import Path
 import gym
 from stable_baselines.common.callbacks import StopTrainingOnRewardThreshold, EvalCallback
 
-from stable_baselines.deepq.policies import MlpPolicy, CnnPolicy
+from stable_baselines.deepq.policies import MlpPolicy
 from stable_baselines import DQN
 
-from src.utils import create_test_env
+from utils import find_saved_model
 
 PARAMS = {
     "CartPole-v1": {
@@ -42,7 +42,7 @@ PARAMS = {
         'lr': 1e-3,
         'prio_replay': True,
         'param_noise': False,
-        'N': 100000,
+        'N': 10000,
         'learning_starts': 1000,
         'target_network_update_freq': 500,
         'train_freq': 1,
@@ -52,10 +52,13 @@ PARAMS = {
 
 class BaselineOracle:
     def __init__(self, env_name, specifier=""):
-        path = Path("/Users/rmadhwal/IdeaProjects/ViperInterpretability/DQN", env_name + specifier)
+        path = Path("DQN", env_name + specifier)
         try:
-            self.model = DQN.load(str(path))
+            model_path = find_saved_model("dqn", "DQN", env_name, load_best=False)
+            print(model_path)
+            self.model = DQN.load(model_path)
         except ValueError:
+            print()
             p = PARAMS[env_name]
             env = gym.make(env_name)
             self.model = DQN(MlpPolicy, env,
