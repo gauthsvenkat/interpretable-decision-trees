@@ -68,14 +68,28 @@ class Evaluate:
             print('{} fidelity in oracle trace {}%'.format(name, (fid1 * 100)))
             print('{} fidelity in policy trace {}%'.format(name, (fid2 * 100)))
 
-    def stability(self, env, policy):
-        pass
+    def expected_depth(self):
+        """Returns the expected depth of a decision of each policy"""
+        for name, policy, trace in zip(self.policy_names, self.policies, self.flattened_policy_traces):
+            
+            # convert obervations to numpy array
+            observations = np.array([oo for oo, _, _ in trace])
 
-    def expected_depth_policies(self):
-        for name, policy in zip(self.policy_names, self.policies):
-            print('{} expected depth {}'.format(name, policy.expected_depth()))
+            # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
+            try:
+                node_indicator = policy.tree.decision_path(observations).toarray()
+            except AttributeError: #simple policies don't have any trees so we are improvising this
+                node_indicator = np.ones((len(observations), 1))
+
+            # get the list of node_ids that are traversed by the samples
+            decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
+
+            # find the depth traversed by each sample
+            depths = list(map(lambda x: len(x)-1, decision_paths))            
+            
+            print('{} expected depth of decision {}'.format(name, np.mean(depths)))
 
     def evaluate(self):
         self.play_performance()
         self.fidelity()
-        self.expected_depth_policies()
+        self.expected_depth()
