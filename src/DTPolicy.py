@@ -21,12 +21,8 @@ class DTPolicy:
         self.max_depth = max_depth
         self.tree = DecisionTreeClassifier(max_depth=self.max_depth)
 
-        self.expected_depth_of_each_batch = []
-
     def fit(self, obss, acts):
         self.tree.fit(obss, acts)
-        # Everytime the policy changes reset the expected depth list
-        self.expected_depth_of_each_batch = []
 
     def train(self, obss, acts, train_frac):
         obss_train, acts_train, obss_test, acts_test = split_train_test(obss, acts, train_frac)
@@ -37,25 +33,8 @@ class DTPolicy:
         print('Number of nodes: {}'.format(self.tree.tree_.node_count))
 
     def predict(self, obss):
-
-        # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
-        node_indicator = self.tree.decision_path(obss).toarray() 
-        # get the list of node_ids that are traversed by the samples
-        decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
-        # find the depth traversed by each sample
-        depths = list(map(lambda x: len(x)-1, decision_paths))
-        # add the expected depth to the list
-        self.expected_depth_of_each_batch.append(np.mean(depths))
-        
-        # return the list of leaf_node_ids by the samples
-        leaf_nodes = list(map(lambda x: x[-1], decision_paths))
-        # return the class labels of the leaf_node_ids
-        vs = np.array(list(map(lambda x: np.argmax(self.tree.tree_.value[x]), leaf_nodes)))
-
+        vs = self.tree.predict(obss)
         return vs
-    
-    def expected_depth(self):
-        return np.mean(self.expected_depth_of_each_batch)
 
     def clone(self):
         clone = DTPolicy(self.max_depth)
@@ -88,19 +67,10 @@ class SimpleMCDT:
     def predict(self, obss):
         return [0 if obs[1] < 0.0 else 2 for obs in obss]
 
-    def expected_depth(self):
-        return 0.0
-
 class SimpleCartPoleDT:
     def predict(self, obss):
         return [0 if obs[3] < 0.0 else 1 for obs in obss]
 
-    def expected_depth(self):
-        return 0.0
-
 class SimpleAcrobotDT:
     def predict(self, obss):
         return [0 if obs[4] <= -0.02 else 2 for obs in obss]
-
-    def expected_depth(self):
-        return 0.0
