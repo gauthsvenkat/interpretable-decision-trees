@@ -5,11 +5,11 @@
 set -ex
 
 # Set up display; otherwise rendering will fail
-Xvfb :1 -screen 0 1024x768x24 &
-export DISPLAY=:1
+Xvfb :2 -screen 0 1024x768x24 &
+export DISPLAY=:2
 
 # Wait for the file to come up
-display=1
+display=2
 file="/tmp/.X11-unix/X$display"
 
 sleep 1
