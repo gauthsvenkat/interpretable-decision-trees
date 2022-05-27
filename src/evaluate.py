@@ -71,7 +71,7 @@ class Evaluate:
     def expected_depth(self):
         """Returns the expected depth of a decision of each policy"""
         for name, policy, trace in zip(self.policy_names, self.policies, self.flattened_policy_traces):
-            
+
             # convert obervations to numpy array
             observations = np.array([oo for oo, _, _ in trace])
 
@@ -85,9 +85,39 @@ class Evaluate:
             decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
 
             # find the depth traversed by each sample
-            depths = list(map(lambda x: len(x)-1, decision_paths))            
-            
+            depths = list(map(lambda x: len(x)-1, decision_paths))
+
             print('{} expected depth of decision {}'.format(name, np.mean(depths)))
+
+    def feature_uniqueness(self):
+        """Returns the ratio of the number of unique decision features used to the total number of features. Value close to 1 is better"""
+        for name, policy, trace in zip(self.policy_names, self.policies, self.flattened_policy_traces):
+            # convert obervations to numpy array
+            observations = np.array([oo for oo, _, _ in trace])
+            # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
+            try:
+                node_indicator = policy.tree.decision_path(observations).toarray()
+
+            except AttributeError: #simple policies don't have any trees so we are imrpovising this
+                node_indicator = np.ones((len(observations), 1))
+
+            # get the list of node_ids that are traversed by the samples
+            decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
+
+            depths_mod = list(map(lambda x: max(len(x)-1.0,1), decision_paths))
+            features = []
+            feature_uniqueness_ratio = []
+            for i in range(len(decision_paths)):
+                features.append({})
+                for j in range(len(decision_paths[i])-1):
+                    feature = policy.tree.tree_.feature[decision_paths[i][j]]
+                    if(feature not in features[i].keys()):
+                        features[i][feature] = 1
+                    else:
+                        features[i][feature] += 1
+                feature_uniqueness_ratio.append(len(features[i].keys())/depths_mod[i])
+
+            print('{} expected uniqueness ratio {}'.format(name, np.mean(feature_uniqueness_ratio)))
 
     def evaluate(self):
         self.play_performance()
