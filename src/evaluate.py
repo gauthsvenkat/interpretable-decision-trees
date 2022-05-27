@@ -71,6 +71,11 @@ class Evaluate:
     def stability(self, env, policy):
         pass
 
+    def expected_depth_policies(self):
+        for name, policy in zip(self.policy_names, self.policies):
+            print('{} expected depth {}'.format(name, policy.expected_depth()))
+
     def evaluate(self):
         self.play_performance()
         self.fidelity()
+        self.expected_depth_policies()
