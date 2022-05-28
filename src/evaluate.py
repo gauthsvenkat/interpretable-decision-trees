@@ -134,10 +134,11 @@ class Evaluate:
                 n_nodes = policy.tree.tree_.node_count
             except AttributeError: #no tree for simple policy
                 n_nodes = 0
-            print('{} decision nodes used: {}'.format(name, np.mean(n_nodes)))
+            print('{} decision nodes used: {}'.format(name, n_nodes))
 
     def evaluate(self):
         self.play_performance()
         self.fidelity()
         self.expected_depth()
+        self.feature_uniqueness()
         self.node_counts()
