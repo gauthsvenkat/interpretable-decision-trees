@@ -1,3 +1,4 @@
+from interpretableai import iai
 import gym
 import argparse
 
@@ -22,7 +23,6 @@ def play(env, policy):
 
 
 def main(args):
-
     env_name = args.env_name
     env = gym.make(env_name)
     env.reset()
@@ -41,7 +41,7 @@ def main(args):
     e = Evaluate(env, oracle, [student, bc, simple], n_rollouts=200, policy_names=["Student", "Bc", "Simple"])
 
     print(e.evaluate())
-    play(env, oracle)
+    # play(env, oracle)
 
 
 if __name__ == '__main__':
