@@ -104,17 +104,25 @@ class Evaluate:
             # get the list of node_ids that are traversed by the samples
             decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
 
+            #adjusted depth calculation. Prevents division by zero error.
             depths_mod = list(map(lambda x: max(len(x)-1.0,1), decision_paths))
+
+            #list of features encountered while traversing the decision tree
             features = []
+
+            #Captures repetitive use of the same features.
             feature_uniqueness_ratio = []
+
             for i in range(len(decision_paths)):
-                features.append({})
+                features.append({}) #for each observation track the list of features encountered when making the decision
                 for j in range(len(decision_paths[i])-1):
                     feature = policy.tree.tree_.feature[decision_paths[i][j]]
-                    if(feature not in features[i].keys()):
+                    if(feature not in features[i].keys()): #maintain a dictionary of (feature number, occurrences) for each observation
                         features[i][feature] = 1
                     else:
                         features[i][feature] += 1
+
+                #return the number of unique features used/ total number of features used for obtaining the action for an observation
                 feature_uniqueness_ratio.append(len(features[i].keys())/depths_mod[i])
 
             print('{} expected uniqueness ratio {}'.format(name, np.mean(feature_uniqueness_ratio)))
