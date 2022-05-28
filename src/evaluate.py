@@ -141,17 +141,11 @@ class Evaluate:
             try:
                 n_nodes = policy.tree.tree_.node_count
                 max_depth = policy.tree.tree_.max_depth
-            except AttributeError: #no tree for simple policy
-                n_nodes = 0
-                max_depth = 0
-
-            completeness_ratio = 1.0
-            if(n_nodes == 0):
-                print("{} completeness ratio: {}".format(name,completeness_ratio))
-            else:
                 max_nodes = (2**(max_depth+1)) - 1
                 completeness_ratio = n_nodes/max_nodes
-                print("{} completeness ratio: {}".format(name,completeness_ratio))
+            except AttributeError: #no tree for simple policy
+                completeness_ratio = 1.0
+            print("{} completeness ratio: {}".format(name,completeness_ratio))
 
 
 
