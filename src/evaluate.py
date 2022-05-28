@@ -127,7 +127,17 @@ class Evaluate:
 
             print('{} expected uniqueness ratio {}'.format(name, np.mean(feature_uniqueness_ratio)))
 
+    def node_counts(self):
+        #simple metric. Returns the number of nodes in the tree
+        for name,policy in zip(self.policy_names, self.policies):
+            try:
+                n_nodes = policy.tree.tree_.node_count
+            except AttributeError: #no tree for simple policy
+                n_nodes = 0
+            print('{} decision nodes used: {}'.format(name, np.mean(n_nodes)))
+
     def evaluate(self):
         self.play_performance()
         self.fidelity()
         self.expected_depth()
+        self.node_counts()
