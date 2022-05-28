@@ -135,9 +135,32 @@ class Evaluate:
                 n_nodes = 0
             print('{} decision nodes used: {}'.format(name, n_nodes))
 
+    def tree_completeness_ratio(self):
+        #Returns ratio of number of nodes to the max possible number of nodes. Smaller value is better
+        for name,policy in zip(self.policy_names, self.policies):
+            try:
+                n_nodes = policy.tree.tree_.node_count
+                max_depth = policy.tree.tree_.max_depth
+            except AttributeError: #no tree for simple policy
+                n_nodes = 0
+                max_depth = 0
+
+            completeness_ratio = 1.0
+            if(n_nodes == 0):
+                print("{} completeness ratio: {}".format(name,completeness_ratio))
+            else:
+                max_nodes = (2**(max_depth+1)) - 1
+                completeness_ratio = n_nodes/max_nodes
+                print("{} completeness ratio: {}".format(name,completeness_ratio))
+
+
+
+
+
     def evaluate(self):
         self.play_performance()
         self.fidelity()
         self.expected_depth()
         self.feature_uniqueness()
         self.node_counts()
+        self.tree_completeness_ratio()
