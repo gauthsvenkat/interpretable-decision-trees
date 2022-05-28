@@ -153,21 +153,21 @@ class Evaluate:
         for name, policy in zip(self.policy_names, self.policies):
             # if there are little important features, 1-(importance) will have mostly high values so their product will be high
             fis = np.prod(1-policy.tree_.compute_feature_importances())
-            print(f"{name} has importance score {fis}")
+            print("{} has importance score {}".format(name, fis))
 
     def insignificant_leaves(self):
         for name, policy in zip(self.policy_names, self.policies):
             max_sample = policy.n_node_samples[0]
             non_leaves = policy.tree_.children_left != -1 != policy.tree_.children_right
             useless = policy.n_node_samples[non_leaves] < max_sample * 0.01  # splits on less than 1 percent of samples are annoying
-            print(f"{name} has {100*useless/np.sum(non_leaves)}% insignificant splits")
+            print("{} has {}% insignificant splits".format(name, 100*useless/np.sum(non_leaves)))
 
     def exact_feature_uniqueness(self):
         for name, policy in zip(self.policy_names, self.policies):
             paths = [[0]]
             uniques = []
             while paths:
-                cur = pahts.pop()
+                cur = paths.pop()
                 l = policy.tree_.children_left[cur[-1]]
                 r = policy.tree_.children_right[cur[-1]]
                 if (l == -1 == r):
@@ -175,15 +175,15 @@ class Evaluate:
                 else:
                     cur_ = cur.copy()
                     cur.append(r)
-                    pahts.append(cur)
+                    paths.append(cur)
 
                     cur_.append(l)
                     paths.append(cur_)
-            print(f"{name} had {np.average(uniques) * 100}% unique features in each path")
+            print("{} had {}% unique features in each path".format(name, np.average(uniques) * 100))
 
     def unnecessary_splits(self):
         for name, policy in zip(self.policy_names, self.policies):
-            print(f"{name} could prune {100 * self._unnecessary_splits(policy, 0)[2] / policy.tree_.node_count}% of nodes without reducing performance")
+            print("{} could prune {}% of nodes without reducing performance".format(name, 100 * self._unnecessary_splits(policy, 0)[2] / policy.tree_.node_count))
 
             
     def _unnecessary_splits(self, policy, node):
@@ -208,16 +208,16 @@ class Evaluate:
                 if values.size > 1:
                     stds.append(np.std(values))
             if len(stds) == 0:
-                print(f"{name} has no repeating features")
+                print("{} has no repeating features".format(name))
             else:
-                print(f"{name} has an average standard deviation of {np.average(stds)} among repeating features (max {np.max(stds)}, min {np.min(stds)})")
+                print("{} has an average standard deviation of {} among repeating features (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
 
     def same_value_differences_in_path(self):
         for name, policy in zip(self.policy_names, self.policies):
             paths = [[0]]
             stds = []
             while paths:
-                cur = pahts.pop()
+                cur = paths.pop()
                 l = policy.tree_.children_left[cur[-1]]
                 r = policy.tree_.children_right[cur[-1]]
                 if (l == -1 == r):
@@ -230,14 +230,14 @@ class Evaluate:
                 else:
                     cur_ = cur.copy()
                     cur.append(r)
-                    pahts.append(cur)
+                    paths.append(cur)
 
                     cur_.append(l)
                     paths.append(cur_)
             if len(stds) == 0:
-                print(f"{name} has no repeating features")
+                print("{} has no repeating features".format(name))
             else:
-                print(f"{name} has an average standard deviation of {np.average(stds)} among repeating features (max {np.max(stds)}, min {np.min(stds)})")
+                print("{} has an average standard deviation of {} among repeating features (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
 
 
     def evaluate(self):
