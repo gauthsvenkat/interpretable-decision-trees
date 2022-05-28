@@ -180,11 +180,13 @@ class ViperEnvConfig:
         )
 
 
-def get_student(env, oracle, train=True, save_path_specifier=""):
+def get_student(env, oracle, train=True, save_path_specifier="",depth=-1):
     dt_save_folder = Path('student', env.unwrapped.spec.id)
     os.makedirs(str(dt_save_folder), exist_ok=True)
     config = ViperEnvConfig.get_viper_config(env.unwrapped.spec.id)
-
+    if(depth != -1):
+        config.student_max_depth = depth
+    
     if train:
         student = DTPolicy(config.student_max_depth)
         student, _ = train_viper(env, student, oracle, config.viper_max_iters, config.viper_max_rollouts,
