@@ -97,8 +97,7 @@ class Evaluate:
             # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
             try:
                 node_indicator = policy.tree.decision_path(observations).toarray()
-
-            except AttributeError: #simple policies don't have any trees so we are imrpovising this
+            except AttributeError: #simple policies don't have any trees so we are improvising this
                 node_indicator = np.ones((len(observations), 1))
 
             # get the list of node_ids that are traversed by the samples
