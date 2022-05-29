@@ -111,7 +111,6 @@ class Evaluate:
 
             #Captures repetitive use of the same features.
             feature_uniqueness_ratio = []
-
             for i in range(len(decision_paths)):
                 features.append({}) #for each observation track the list of features encountered when making the decision
                 for j in range(len(decision_paths[i])-1):
@@ -122,9 +121,23 @@ class Evaluate:
                         features[i][feature] += 1
 
                 #return the number of unique features used/ total number of features used for obtaining the action for an observation
-                feature_uniqueness_ratio.append(len(features[i].keys())/depths_mod[i])
+
+                """If the counts for two nodes are 10000 and 2, then effectively its as if there is only 1 node being used.
+                The below function gets this effective node usage count. Earlier method using .keys() would have resulted
+                in 2 effective nodes. We need something in between 1 an 2"""
+                equi_nodes = self.getEffectiveFeaturesUsed(features[i].values())
+                feature_uniqueness_ratio.append(equi_nodes/depths_mod[i])
+
 
             print('{} expected uniqueness ratio {}'.format(name, np.mean(feature_uniqueness_ratio)))
+
+    def getEffectiveFeaturesUsed(self, usage_counts):
+        """Example: Assume there are two nodes with occurrence counts 10000 and 2. 1/np.mean() results in 1/5001. Now arr becomes [10000,2] * 1/5001
+         =  [1.99,3.99 x 10^-4]. Effectively only the first one should be counted. So, we threshold values to 1 then sum to get the effective count"""
+        arr = np.array(list(usage_counts))
+        arr = arr * (1.0/np.mean(arr)) #to see which values exceed the average.
+        arr = np.clip(arr, 0, 1) #All nodes with values greater than the mean are counted as effective. So threshold at 1.
+        return np.sum(arr)
 
     def node_counts(self):
         #simple metric. Returns the number of nodes in the tree
@@ -151,9 +164,9 @@ class Evaluate:
 
 
     def evaluate(self):
-        self.play_performance()
-        self.fidelity()
-        self.expected_depth()
+        # self.play_performance()
+        # self.fidelity()
+        # self.expected_depth()
         self.feature_uniqueness()
-        self.node_counts()
-        self.tree_completeness_ratio()
+        # self.node_counts()
+        # self.tree_completeness_ratio()
