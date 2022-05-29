@@ -164,9 +164,9 @@ class Evaluate:
 
 
     def evaluate(self):
-        # self.play_performance()
-        # self.fidelity()
-        # self.expected_depth()
+        self.play_performance()
+        self.fidelity()
+        self.expected_depth()
         self.feature_uniqueness()
-        # self.node_counts()
-        # self.tree_completeness_ratio()
+        self.node_counts()
+        self.tree_completeness_ratio()

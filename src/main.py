@@ -47,7 +47,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train and evaluate the expert and student policies')
     parser.add_argument('--env_name', type=str, default='Acrobot-v1', help='Name of the environment to use [Acrobot-v1, CartPole-v1, MountainCar-v0]')
-    parser.add_argument('--max_depth', type=int, help='The max depth for the generated trees')
+    parser.add_argument('--max_depth', type=int, default=1, help='The max depth for the generated trees')
     parser.add_argument('--student_path',type=str, default="", help='the policy name for the generated student tree. Use something like _depth_<VALUE>')
     parser.add_argument('--bc_path',type=str, default="",help='the policy name for the generated bc tree. Use something like _depth_<VALUE>')
 
