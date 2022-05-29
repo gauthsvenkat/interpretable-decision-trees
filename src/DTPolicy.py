@@ -4,6 +4,8 @@ import numpy as np
 import pickle as pk
 import os
 
+from sklearn.tree._tree import _build_pruned_tree_ccp, Tree
+
 
 def split_train_test(obss, acts, train_frac):
     n_train = int(train_frac * len(obss))
@@ -24,13 +26,37 @@ class DTPolicy:
     def fit(self, obss, acts):
         self.tree.fit(obss, acts)
 
-    def train(self, obss, acts, train_frac):
+    def train(self, obss, acts, train_frac, prune_frac=0.05):
         obss_train, acts_train, obss_test, acts_test = split_train_test(obss, acts, train_frac)
+
+        obss_train, acts_train, obss_prune, acts_prune = split_train_test(obss_train, acts_train, prune_frac)
+
         self.tree = DecisionTreeClassifier(max_depth=self.max_depth)
         self.fit(obss_train, acts_train)
-        print('Train accuracy: {}'.format(self.accuracy(obss_train, acts_train)))
-        print('Test accuracy: {}'.format(self.accuracy(obss_test, acts_test)))
-        print('Number of nodes: {}'.format(self.tree.tree_.node_count))
+
+        print('Train accuracy before pruning: {}'.format(self.accuracy(obss_train, acts_train)))
+        print('Test accuracy before pruning: {}'.format(self.accuracy(obss_test, acts_test)))
+        print('Number of nodes before pruning: {}'.format(self.tree.tree_.node_count))
+
+        high_acc, ha_alpha = 0, 0
+        for ccp_a in self.tree.cost_complexity_pruning_path(obss_train, acts_train)['ccp_alphas']:
+            copy = Tree(self.tree.n_features_, np.atleast_1d(self.tree.n_classes_), self.tree.n_outputs_)
+            _build_pruned_tree_ccp(copy, self.tree.tree_, ccp_a)
+
+            orig = self.tree.tree_
+            self.tree.tree_ = copy
+            acc = self.accuracy(obss_prune, acts_prune)
+            if acc > high_acc:
+                high_acc = acc
+                ha_alpha = ccp_a
+            self.tree.tree_ = orig
+
+        self.tree.ccp_alpha = ha_alpha
+        self.tree._prune_tree()
+
+        print('Train accuracy after pruning: {}'.format(self.accuracy(obss_train, acts_train)))
+        print('Test accuracy after pruning: {}'.format(self.accuracy(obss_test, acts_test)))
+        print('Number of nodes after pruning: {}'.format(self.tree.tree_.node_count))
 
     def predict(self, obss):
         vs = self.tree.predict(obss)
