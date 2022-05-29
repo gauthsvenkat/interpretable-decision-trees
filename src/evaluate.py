@@ -134,6 +134,8 @@ class Evaluate:
     def getEffectiveFeaturesUsed(self, usage_counts):
         """Example: Assume there are two nodes with occurrence counts 10000 and 2. 1/np.mean() results in 1/5001. Now arr becomes [10000,2] * 1/5001
          =  [1.99,3.99 x 10^-4]. Effectively only the first one should be counted. So, we threshold values to 1 then sum to get the effective count"""
+        if len(usage_counts) == 0:
+             return 0
         arr = np.array(list(usage_counts))
         arr = arr * (1.0/np.mean(arr)) #to see which values exceed the average.
         arr = np.clip(arr, 0, 1) #All nodes with values greater than the mean are counted as effective. So threshold at 1.
