@@ -7,12 +7,14 @@ from src.DTPolicy import DTPolicy
 from src.viper import get_rollouts, ViperEnvConfig
 
 
-def get_student(env, oracle, train=True, save_path_specifier=""):
+def get_student(env, oracle, train=True, save_path_specifier="",depth=-1):
     n_rollouts = 200
     dt_save_folder = Path('bc', env.unwrapped.spec.id)
     os.makedirs(str(dt_save_folder), exist_ok=True)
 
     config = ViperEnvConfig.get_viper_config(env.unwrapped.spec.id)
+    if(depth != -1):
+        config.student_max_depth = depth
 
     if train:
         trace = get_rollouts(env, oracle, n_rollouts)
@@ -23,10 +25,9 @@ def get_student(env, oracle, train=True, save_path_specifier=""):
 
         student.train(obss, acts, config.viper_train_frac)
         student.save_dt_policy(Path(dt_save_folder, 'policy{}.pk'.format(save_path_specifier)))
-        student.save_dt_policy_viz(Path(dt_save_folder, 'policy.png'))
+        student.save_dt_policy_viz(Path(dt_save_folder, 'policy{}.png'.format(save_path_specifier)))
     else:
         student = DTPolicy.load_dt_policy(Path(dt_save_folder, 'policy{}.pk'.format(save_path_specifier)))
         student.save_dt_policy_viz(Path(dt_save_folder, 'policy{}.png'.format(save_path_specifier)))
 
     return student
-
