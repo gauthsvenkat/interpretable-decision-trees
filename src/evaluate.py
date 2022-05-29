@@ -152,45 +152,58 @@ class Evaluate:
         # It's better to have a few important features and not or barely use the others, users only need to keep the important ones in mind
         for name, policy in zip(self.policy_names, self.policies):
             # if there are little important features, 1-(importance) will have mostly high values so their product will be high
-            fis = np.prod(1-policy.tree_.compute_feature_importances())
+            try:
+                fis = np.prod(1-policy.tree.tree_.compute_feature_importances())
+            except AttributeError:
+                fis = 0
             print("{} has importance score {}".format(name, fis))
 
     def insignificant_leaves(self):
         for name, policy in zip(self.policy_names, self.policies):
-            max_sample = policy.n_node_samples[0]
-            non_leaves = policy.tree_.children_left != -1 != policy.tree_.children_right
-            useless = policy.n_node_samples[non_leaves] < max_sample * 0.01  # splits on less than 1 percent of samples are annoying
-            print("{} has {}% insignificant splits".format(name, 100*useless/np.sum(non_leaves)))
+            try:
+                max_sample = policy.tree.n_node_samples[0]
+                non_leaves = policy.tree.tree_.children_left != -1 != policy.tree.tree_.children_right
+                useless = policy.tree.n_node_samples[non_leaves] < max_sample * 0.01  # splits on less than 1 percent of samples are annoying
+            except AttributeError:
+                useless = 0
+                non_leaves = [1]
+            print("{} has {}% insignificant splits".format(name, 100 * useless / np.sum(non_leaves)))
 
     def exact_feature_uniqueness(self):
         for name, policy in zip(self.policy_names, self.policies):
-            paths = [[0]]
-            uniques = []
-            while paths:
-                cur = paths.pop()
-                l = policy.tree_.children_left[cur[-1]]
-                r = policy.tree_.children_right[cur[-1]]
-                if (l == -1 == r):
-                    uniques.append(np.unique(cur).size / cur.size)
-                else:
-                    cur_ = cur.copy()
-                    cur.append(r)
-                    paths.append(cur)
+            try:
+                paths = [[0]]
+                uniques = []
+                while paths:
+                    cur = paths.pop()
+                    l = policy.tree.tree_.children_left[cur[-1]]
+                    r = policy.tree.tree_.children_right[cur[-1]]
+                    if (l == -1 == r):
+                        uniques.append(np.unique(cur).size / cur.size)
+                    else:
+                        cur_ = cur.copy()
+                        cur.append(r)
+                        paths.append(cur)
 
-                    cur_.append(l)
-                    paths.append(cur_)
+                        cur_.append(l)
+                        paths.append(cur_)
+            except AttributeError:
+                uniques = [1]
             print("{} had {}% unique features in each path".format(name, np.average(uniques) * 100))
 
     def unnecessary_splits(self):
         for name, policy in zip(self.policy_names, self.policies):
-            print("{} could prune {}% of nodes without reducing performance".format(name, 100 * self._unnecessary_splits(policy, 0)[2] / policy.tree_.node_count))
+            try:
+                print("{} could prune {}% of nodes without reducing performance".format(name, 100 * self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count))
+            except AttributeError:
+                print("{} couldn't prune".format(name))
 
             
     def _unnecessary_splits(self, policy, node):
-        l = policy.tree_.children_left[node]
-        r = policy.tree_.children_right[node]
+        l = policy.tree.tree_.children_left[node]
+        r = policy.tree.tree_.children_right[node]
         if l == -1 == r:
-            return True, policy.tree_.value[node].argmax(), 0
+            return True, policy.tree.tree_.value[node].argmax(), 0
         lu,lc,ln = self._unnecessary_splits(policy, l)
         ru,rc,rn = self._unnecessary_splits(policy, r)
 
@@ -201,12 +214,15 @@ class Evaluate:
 
     def same_feature_value_differences(self):
         for name, policy in zip(self.policy_names, self.policies):
-            features = policy.tree_.feature[policy.tree_.feature >= 0]
-            stds = []
-            for f in np.unique(features):
-                values = policy.tree_.threshold[policy.tree_.feature == f]
-                if values.size > 1:
-                    stds.append(np.std(values))
+            try:
+                features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
+                stds = []
+                for f in np.unique(features):
+                    values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
+                    if values.size > 1:
+                        stds.append(np.std(values))
+            except AttributeError:
+                stds = [0]
             if len(stds) == 0:
                 print("{} has no repeating features".format(name))
             else:
@@ -216,28 +232,31 @@ class Evaluate:
         for name, policy in zip(self.policy_names, self.policies):
             paths = [[0]]
             stds = []
-            while paths:
-                cur = paths.pop()
-                l = policy.tree_.children_left[cur[-1]]
-                r = policy.tree_.children_right[cur[-1]]
-                if (l == -1 == r):
-                    _features = policy.tree_.feature[cur]
-                    features = policy.tree_.feature[policy.tree_.feature >= 0]
-                    for f in np.unique(features):
-                        values = policy.tree_.threshold[policy.tree_.feature == f]
-                        if values.size > 1:
-                            stds.append(np.std(values))
-                else:
-                    cur_ = cur.copy()
-                    cur.append(r)
-                    paths.append(cur)
+            try:
+                while paths:
+                    cur = paths.pop()
+                    l = policy.tree.tree_.children_left[cur[-1]]
+                    r = policy.tree.tree_.children_right[cur[-1]]
+                    if (l == -1 == r):
+                        _features = policy.tree.tree_.feature[cur]
+                        features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
+                        for f in np.unique(features):
+                            values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
+                            if values.size > 1:
+                                stds.append(np.std(values))
+                    else:
+                        cur_ = cur.copy()
+                        cur.append(r)
+                        paths.append(cur)
 
-                    cur_.append(l)
-                    paths.append(cur_)
+                        cur_.append(l)
+                        paths.append(cur_)
+            except AttributeError:
+                stds = [0]
             if len(stds) == 0:
                 print("{} has no repeating features".format(name))
             else:
-                print("{} has an average standard deviation of {} among repeating features (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                print("{} has an average standard deviation of {} among repeating features in a path (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
 
 
     def evaluate(self):
