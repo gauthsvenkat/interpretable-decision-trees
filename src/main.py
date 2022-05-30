@@ -6,7 +6,6 @@ from src.DTPolicy import SimpleAcrobotDT, SimpleMCDT, SimpleCartPoleDT
 from src import viper, behavioralCloning, Baseline
 from src.evaluate import Evaluate
 
-
 def play(env, policy):
     for _ in range(10):
         state = env.reset()
