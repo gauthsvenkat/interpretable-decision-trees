@@ -46,7 +46,7 @@ class DTPolicy:
             orig = self.tree.tree_
             self.tree.tree_ = copy
             acc = self.accuracy(obss_prune, acts_prune)
-            if acc > high_acc:
+            if acc >= high_acc:  # same accuracy? prefer more pruning
                 high_acc = acc
                 ha_alpha = ccp_a
             self.tree.tree_ = orig
