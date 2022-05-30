@@ -29,14 +29,6 @@ GPU:
 USE_GPU=True ./scripts/build_docker.sh
 ```
 
-Pull built docker image (CPU):
-```
-docker pull stablebaselines/rl-baselines-zoo-cpu
-```
-
-GPU image:
-```
-docker pull stablebaselines/rl-baselines-zoo
 ```
 
 Run script in the docker image:
