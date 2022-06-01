@@ -16,6 +16,6 @@ echo $CMD_LINE
 
 docker run -it --network host --ipc=host \
  --mount src=$(pwd),target=/root/code/rl_zoo,type=bind $DOCKER_IMAGE\
-  bash -c "cp /root/code/rl_zoo/iai-config/iai.lic /root/iai.lic && cd /root/code/rl_zoo/ && $CMD_LINE"
+  bash -c "cd /root/code/rl_zoo/ && $CMD_LINE"
 
 kill $SERVER_PID

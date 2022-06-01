@@ -1,8 +1,11 @@
+from interpretableai import iai
+
 import pydotplus
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 import numpy as np
 import pickle as pk
 import os
+
 
 
 def split_train_test(obss, acts, train_frac):
@@ -17,16 +20,25 @@ def split_train_test(obss, acts, train_frac):
 
 
 class DTPolicy:
-    def __init__(self, max_depth):
+    def __init__(self, max_depth, optimal_tree=True):
         self.max_depth = max_depth
-        self.tree = DecisionTreeClassifier(max_depth=self.max_depth)
+        self.optimal_tree = optimal_tree
+        if self.optimal_tree:
+            self.tree = iai.OptimalTreeClassifier(max_depth=self.max_depth)
+        else :
+            self.tree = DecisionTreeClassifier(max_depth=self.max_depth)
 
     def fit(self, obss, acts):
         self.tree.fit(obss, acts)
 
     def train(self, obss, acts, train_frac):
         obss_train, acts_train, obss_test, acts_test = split_train_test(obss, acts, train_frac)
-        self.tree = DecisionTreeClassifier(max_depth=self.max_depth)
+
+        if self.optimal_tree:
+            self.tree = iai.OptimalTreeClassifier(max_depth=self.max_depth)
+        else :
+            self.tree = DecisionTreeClassifier(max_depth=self.max_depth)
+
         self.fit(obss_train, acts_train)
         print('Train accuracy: {}'.format(self.accuracy(obss_train, acts_train)))
         print('Test accuracy: {}'.format(self.accuracy(obss_test, acts_test)))

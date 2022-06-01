@@ -40,6 +40,7 @@ RUN python -c "import interpretableai; interpretableai.install_julia(); interpre
 RUN python -c "from interpretableai import iai;"
 
 COPY docker/entrypoint.sh /tmp/
+COPY iai-config/iai.lic /root/iai.lic
 ENTRYPOINT ["/tmp/entrypoint.sh"]
 
 CMD /bin/bash
