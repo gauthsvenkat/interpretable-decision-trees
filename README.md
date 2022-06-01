@@ -24,13 +24,7 @@ Build docker image (CPU):
 ./scripts/build_docker.sh
 ```
 
-GPU:
 ```
-USE_GPU=True ./scripts/build_docker.sh
-```
-
-```
-
 Run script in the docker image:
 
 ```

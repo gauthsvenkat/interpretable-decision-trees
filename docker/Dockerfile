@@ -1,35 +1,43 @@
 ARG PARENT_IMAGE
-ARG USE_GPU
 FROM $PARENT_IMAGE
 
-RUN apt-get -y update \
-    && apt-get -y install \
-    ffmpeg \
-    freeglut3-dev \
-    swig \
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Amsterdam
+
+# Install system dependencies
+RUN apt-get update && apt-get -y install \
+    g++ \
+    cmake \
+    libopenmpi-dev \
+    libz-dev \
     xvfb \
+    python3-opencv \
     graphviz \
-    && apt-get clean \
+    locales \
+    ffmpeg \
+    && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-ENV CODE_DIR /root/code
-ENV VENV /root/venv
-
+# Install python dependencies
 RUN \
-    mkdir -p ${CODE_DIR}/rl_zoo && \
-    . $VENV/bin/activate && \
-    pip uninstall -y stable-baselines && \
-    pip install stable-baselines[mpi]==2.10.0 && \
-    pip install box2d-py==2.3.5 && \
-    pip install pybullet && \
-    pip install gym-minigrid && \
-    pip install scikit-optimize && \
-    pip install optuna && \
-    pip install pytablewriter && \
-    pip install pydotplus==2.0.2 && \
-    rm -rf $HOME/.cache/pip
+    pip install stable-baselines[mpi]==2.10.0 \
+    box2d-py==2.3.5 \
+    pybullet \
+    gym-minigrid \
+    scikit-optimize \
+    optuna \
+    pytablewriter \
+    pydotplus \
+    protobuf==3.4.0 \
+    tensorflow==1.8.0 \
+    interpretableai \
+    && rm -rf $HOME/.cache/pip
 
-ENV PATH=$VENV/bin:$PATH
+# python 3.5 has a weird problem with f string so fix it 
+RUN sed -i 's/f"{self.src_path} is not mounted successfully"/"{} is not mounted successfully".format(self.src_path)/' /usr/local/lib/python3.5/site-packages/interpretableai/installation.py
+# Install julia and system image
+RUN python -c "import interpretableai; interpretableai.install_julia(); interpretableai.install_system_image()"
+RUN python -c "from interpretableai import iai;"
 
 COPY docker/entrypoint.sh /tmp/
 ENTRYPOINT ["/tmp/entrypoint.sh"]
