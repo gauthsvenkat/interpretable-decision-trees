@@ -13,6 +13,7 @@ RUN apt-get update && apt-get -y install \
     xvfb \
     python3-opencv \
     graphviz \
+    libffi-dev \
     locales \
     ffmpeg \
     && apt-get autoremove -y \
@@ -30,6 +31,7 @@ RUN \
     pydotplus \
     protobuf==3.4.0 \
     tensorflow==1.8.0 \
+    jupyter \
     interpretableai \
     && rm -rf $HOME/.cache/pip
 
