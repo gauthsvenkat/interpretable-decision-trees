@@ -1,4 +1,4 @@
-from interpretableai import iai
+from interpretableai import iai # we don't need IAI here but for some reason importing IAI here prevents the code from breaking
 
 import gym
 import argparse
@@ -28,8 +28,8 @@ def main(args):
     env.reset()
 
     oracle = Baseline.BaselineOracle(env_name, specifier="")
-    student = viper.get_student(env, oracle, train=True, save_path_specifier=args.student_path, depth=args.max_depth)
-    bc = behavioralCloning.get_student(env, oracle, train=True, save_path_specifier=args.bc_path, depth=args.max_depth)
+    student = viper.get_student(env, oracle, train=True, save_path_specifier=args.student_path, depth=args.max_depth, optimal_tree=args.optimal_tree)
+    bc = behavioralCloning.get_student(env, oracle, train=True, save_path_specifier=args.bc_path, depth=args.max_depth, optimal_tree=args.optimal_tree)
 
     if env_name == 'MountainCar-v0':
         simple = SimpleMCDT()
@@ -41,7 +41,6 @@ def main(args):
     e = Evaluate(env, oracle, [student, bc, simple], n_rollouts=200, policy_names=["Student", "Bc", "Simple"])
 
     print(e.evaluate())
-    # play(env, oracle)
 
 
 if __name__ == '__main__':
@@ -50,6 +49,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_depth', type=int, default=1, help='The max depth for the generated trees')
     parser.add_argument('--student_path',type=str, help='the policy name for the generated student tree. Use something like _depth_<VALUE>')
     parser.add_argument('--bc_path',type=str, help='the policy name for the generated bc tree. Use something like _depth_<VALUE>')
+    parser.add_argument('--optimal_tree', action='store_true', help='Play the environment with the generated policies')
 
     args = parser.parse_args()
     main(args)
