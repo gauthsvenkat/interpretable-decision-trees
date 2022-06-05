@@ -1,6 +1,6 @@
-Oracle average: -87.04 with std: 22.00
-Bc avg: -80.68 with std 12.97. Difference = -6.36 and min = -153.00. Match score = 0.72
-Bc fidelity in oracle trace 0.83
+Oracle average: -95.22 with std: 56.28
+Bc avg: -79.51 with std 11.42. Difference = -15.71 and min = -144.00. Match score = 0.35
+Bc fidelity in oracle trace 0.81
 Bc expected depth of decision 2.00
 Bc expected uniqueness ratio 1.00
 Bc decision nodes used: 7

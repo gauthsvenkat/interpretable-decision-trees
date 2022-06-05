@@ -1,6 +1,6 @@
-Oracle average: -86.88 with std: 25.55
-Student avg: -81.53 with std 14.62. Difference = -5.35 and min = -168.00. Match score = 0.72
-Student fidelity in oracle trace 0.85
+Oracle average: -90.38 with std: 36.74
+Student avg: -83.22 with std 18.54. Difference = -7.16 and min = -210.00. Match score = 0.67
+Student fidelity in oracle trace 0.84
 Student expected depth of decision 3.00
 Student expected uniqueness ratio 1.00
 Student decision nodes used: 15

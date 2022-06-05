@@ -11,7 +11,7 @@ from scipy.stats import norm
 
 class Evaluate:
 
-    def __init__(self, env, oracle, policies, n_rollouts=500, policy_names=None, experiment="", no_print=False):
+    def __init__(self, env, oracle, policies, n_rollouts=500, policy_names=None, experiment="", no_print=False, optimal = False):
         self.env = env
         self.policies = policies
         self.oracle = oracle
@@ -26,7 +26,10 @@ class Evaluate:
         self.experiment = experiment
         env_name = env.unwrapped.spec.id
         if(self.experiment != ""):#you want to save the results
-            pth = "experiments/"+env_name+"/"
+            if(optimal):
+                pth = "experiments/"+env_name+"-optimal"+"/"
+            else:
+                pth = "experiments/"+env_name+"/"
             isExist = os.path.exists(pth)
             if(isExist == False):
                 os.makedirs(pth)

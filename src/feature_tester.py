@@ -29,8 +29,8 @@ def main(args):
     env.reset()
 
     oracle = Baseline.BaselineOracle(env_name, specifier="")
-    student = viper.get_student(env, oracle, train=False, save_path_specifier=args.student_path,depth=args.max_depth)
-    bc = behavioralCloning.get_student(env, oracle, train=False, save_path_specifier=args.bc_path,depth=args.max_depth)
+    student = viper.get_student(env, oracle, train=False, save_path_specifier=args.student_path,depth=args.max_depth,optimal_tree=args.optimal_tree)
+    bc = behavioralCloning.get_student(env, oracle, train=False, save_path_specifier=args.bc_path,depth=args.max_depth,optimal_tree=args.optimal_tree)
 
     if env_name == 'MountainCar-v0':
         simple = SimpleMCDT()
@@ -39,7 +39,7 @@ def main(args):
     elif env_name == 'Acrobot-v1':
         simple = SimpleAcrobotDT()
 
-    e = Evaluate(env, oracle, [student, bc, simple], n_rollouts=args.rollouts, policy_names=["Student", "Bc"], experiment = args.experiment, no_print=args.no_print)
+    e = Evaluate(env, oracle, [student, bc, simple], n_rollouts=args.rollouts, policy_names=["Student", "Bc"], experiment = args.experiment, no_print=args.no_print, optimal = args.optimal_tree)
 
     e.evaluate()
     #play(env, oracle)
@@ -47,6 +47,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train and evaluate the expert and student policies')
+    parser.add_argument('--optimal_tree', action='store_true', help='Play the environment with the generated policies')
     parser.add_argument('--no_print',type=bool, default=False, help='Set to true to not print results')
     parser.add_argument('--env_name', type=str, default='Acrobot-v1', help='Name of the environment to use')
     parser.add_argument('--rollouts', type=int, default=200, help='How many rollouts to use')
