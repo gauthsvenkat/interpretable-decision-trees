@@ -180,6 +180,7 @@ class ViperEnvConfig:
         )
 
 
+
 def get_student(env, oracle, train=True, save_path_specifier="", depth=-1, optimal_tree=False):
     if optimal_tree:
         dt_save_folder = Path('student', env.unwrapped.spec.id+'-optimal_tree')
