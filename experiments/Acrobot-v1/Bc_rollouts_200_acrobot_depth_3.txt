@@ -1,0 +1,13 @@
+Oracle average: -86.88 with std: 25.55
+Bc avg: -84.50 with std 21.30. Difference = -2.37 and min = -252.00. Match score = 0.91
+Bc fidelity in oracle trace 0.85
+Bc expected depth of decision 3.00
+Bc expected uniqueness ratio 0.78
+Bc decision nodes used: 15
+Bc completeness ratio: 1.00
+Bc has importance score 0.19
+Bc has 0.00 insignificant splits
+Bc had 0.67 unique features in each path
+Bc could prune 0.07 of nodes without reducing performance
+Bc has an average standard deviation of 0.61 among repeating features (max 1.42, min 0.17)
+Bc has an average standard deviation of 0.61 among repeating features in a path (max 1.42, min 0.17)
