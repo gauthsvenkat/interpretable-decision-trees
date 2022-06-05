@@ -7,7 +7,7 @@ from src.DTPolicy import DTPolicy
 from src.viper import get_rollouts, ViperEnvConfig
 
 
-def get_student(env, oracle, train=True, save_path_specifier="", depth=-1, optimal_tree=False):
+def get_student(env, oracle, train=True, save_path_specifier="",depth=-1):
     n_rollouts = 200
 
     if optimal_tree:
