@@ -9,7 +9,12 @@ from src.viper import get_rollouts, ViperEnvConfig
 
 def get_student(env, oracle, train=True, save_path_specifier="", depth=-1, optimal_tree=False):
     n_rollouts = 200
-    dt_save_folder = Path('bc', env.unwrapped.spec.id)
+
+    if optimal_tree:
+        dt_save_folder = Path('bc', env.unwrapped.spec.id+'-optimal_tree')
+    else:
+        dt_save_folder = Path('bc', env.unwrapped.spec.id)
+
     os.makedirs(str(dt_save_folder), exist_ok=True)
 
     config = ViperEnvConfig.get_viper_config(env.unwrapped.spec.id)
