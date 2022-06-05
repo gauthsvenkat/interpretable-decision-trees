@@ -1,5 +1,5 @@
-Oracle average: -139.07 with std: 21.10
-Student avg: -130.04 with std 32.75. Difference = -9.03 and min = -176.00. Match score = 0.76
+Oracle average: -137.47 with std: 22.34
+Student avg: -133.11 with std 32.44. Difference = -4.36 and min = -177.00. Match score = 0.81
 Student fidelity in oracle trace 0.91
 Student expected depth of decision 2.00
 Student expected uniqueness ratio 0.50

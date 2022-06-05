@@ -1,5 +1,5 @@
 Oracle average: 500.00 with std: 0.00
-Bc avg: 499.32 with std 5.40. Difference = 0.68 and min = 444.00. Match score = 0.00
+Bc avg: 499.42 with std 4.66. Difference = 0.58 and min = 451.00. Match score = 0.08
 Bc fidelity in oracle trace 0.91
 Bc expected depth of decision 3.00
 Bc expected uniqueness ratio 0.56

@@ -13,31 +13,33 @@ def solve(m1,m2,std1,std2):
 
 def getMatchDegree(m1,m2,std1,std2):
     if(std1==0 or std2==0):
-        if(m1 == m2):
-            return 1.0 #kind of like Dirac delta case
-        else:
+        if(std1 == 0 and std2 == 0):
             return 0.0
-    result = solve(m1,m2,std1,std2)
-    r1 = result[0]
-    r2 = result[1]
-    area = 0.0
-    if(r1 == r2): #only one root
-        if(m2 > m1):
-            area = norm.cdf(r1,m2,std2) + 1 - norm.cdf(r1,m1,std1)
+        elif(std1 == 0):
+            return norm.pdf(m1,m2,std2)
         else:
-            area = norm.cdf(r1,m1,std1) + 1 - norm.cdf(r1,m2,std2)
+            return norm.pdf(m2,m1,std1)
+    elif(std1 == std2):
+        root = (m1 + m2)/2
+        if(norm.pdf(root - 1,m1,std1) < norm.pdf(root-1,m2,std2)):
+            return 2 * norm.cdf(root,m1,std1)
+        else:
+            return 2 * norm.cdf(root,m2,std2)
     else:
-        if(r1 <= m1 and m1 <= r2 and r1 <= m2 and m2 <= r2):
-            if(norm.pdf(m1,m1,std1) < norm.pdf(m2,m2,std2)):
-                area = norm.cdf(r1,m2,std2) + 1 - norm.cdf(r2,m2,std2) + norm.cdf(r2,m1,std1) - norm.cdf(r1,m1,std1)
-            else:
-                area = norm.cdf(r1,m1,std1) + 1 - norm.cdf(r2,m1,std1) + norm.cdf(r2,m2,std2) - norm.cdf(r1,m2,std2)
-        elif(m1 <= r1 or m1 >= r2):
-            area = norm.cdf(r1,m2,std2) + norm.cdf(r2,m1,std1) - norm.cdf(r1,m1,std1) + 1- norm.cdf(r2,m2,std2)
-        elif(m2 <= r1 or m2 >= r2):
-            area = norm.cdf(r1,m1,std1) + norm.cdf(r2,m2,std2) - norm.cdf(r1,m2,std2) + 1- norm.cdf(r2,m1,std1)
-
-
-
-    # integrate
-    return area
+        result = solve(m1,m2,std1,std2)
+        r1 = result[0]
+        r2 = result[1]
+        area = 0.0
+        if(norm.pdf(r1-1,m1,std1) < norm.pdf(r1-1,m2,std2)):
+            area += norm.cdf(r1,m1,std1)
+        else:
+            area += norm.cdf(r1,m2,std2)
+        if(norm.pdf((r1+r2)/2,m1,std1) < norm.pdf((r1+r2)/2,m2,std2)):
+            area += norm.cdf(r2,m1,std1) - norm.cdf(r1,m1,std1)
+        else:
+            area += norm.cdf(r2,m2,std2) - norm.cdf(r1,m2,std2)
+        if(norm.pdf(r2+1,m1,std1) < norm.pdf(r2+1,m2,std2)):
+            area += 1 - norm.cdf(r2,m1,std1)
+        else:
+            area += 1 - norm.cdf(r2,m2,std2)
+        return area

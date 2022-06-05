@@ -1,5 +1,5 @@
 Oracle average: 500.00 with std: 0.00
-Student avg: 500.00 with std 0.00. Difference = 0.00 and min = 500.00. Match score = 1.00
+Student avg: 500.00 with std 0.00. Difference = 0.00 and min = 500.00. Match score = 0.00
 Student fidelity in oracle trace 0.72
 Student expected depth of decision 3.00
 Student expected uniqueness ratio 1.00
