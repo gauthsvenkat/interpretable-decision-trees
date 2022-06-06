@@ -15,7 +15,7 @@ CMD_LINE="$@"
 echo "Executing in the docker (cpu image):"
 echo $CMD_LINE
 
-docker run -it --network host --ipc=host -p 8888:8888 \
+docker run -it --network host --rm --ipc=host -p 8888:8888 \
  --mount src=$(pwd),target=/root/code/rl_zoo,type=bind $DOCKER_IMAGE\
   bash -c "cd /root/code/rl_zoo/ && $CMD_LINE"
 
