@@ -14,7 +14,10 @@ def solve(m1,m2,std1,std2):
 def getMatchDegree(m1,m2,std1,std2):
     if(std1==0 or std2==0):
         if(std1 == 0 and std2 == 0):
-            return 0.0
+            if(m1 == m2):
+                return 1.0
+            else:
+                return 0.0
         elif(std1 == 0):
             return norm.pdf(m1,m2,std2)
         else:

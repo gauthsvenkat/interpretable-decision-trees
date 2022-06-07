@@ -38,7 +38,7 @@ def main(args):
         simple = SimpleCartPoleDT()
     elif env_name == 'Acrobot-v1':
         simple = SimpleAcrobotDT()
-
+        
     e = Evaluate(env, oracle, [student, bc, simple], n_rollouts=args.rollouts, policy_names=["Student", "Bc"], experiment = args.experiment, no_print=args.no_print, optimal = args.optimal_tree)
 
     e.evaluate()

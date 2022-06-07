@@ -72,7 +72,7 @@ class Evaluate:
     def play_performance(self):
         """Returns difference in average reward for the two policies"""
         if(self.no_print == False):
-            print("Oracle average: {:.2f} with std: {:.2f}".format(self._oracle_average_reward(), self._oracle_std()))
+            print("Oracle average: {:.4f} with std: {:.4f}".format(self._oracle_average_reward(), self._oracle_std()))
         for avg, std, name, trace in zip(self._policy_average_rewards(), self._policy_stds(), self.policy_names, self.policy_traces):
             min_rollout = min([sum(rew for _, _, rew in rollout) for rollout in trace])
             diff = self._oracle_average_reward() - avg
@@ -83,10 +83,10 @@ class Evaluate:
             match_score = getMatchDegree(mean_oracle,mean_policy,std_oracle,std_policy)
 
             if(self.no_print == False):
-                print("{} avg: {:.2f} with std {:.2f}. Difference = {:.2f} and min = {:.2f}. Match score = {:.2f}".format(name, avg, std, diff, min_rollout,match_score))
+                print("{} avg: {:.4f} with std {:.4f}. Difference = {:.4f} and min = {:.4f}. Match score = {:.4f}".format(name, avg, std, diff, min_rollout,match_score))
             if(self.experiment != ""):
-                self.experiment_paths[name].write("Oracle average: {:.2f} with std: {:.2f}\n".format(self._oracle_average_reward(), self._oracle_std()))
-                self.experiment_paths[name].write("{} avg: {:.2f} with std {:.2f}. Difference = {:.2f} and min = {:.2f}. Match score = {:.2f}\n".format(name, avg, std, diff, min_rollout,match_score))
+                self.experiment_paths[name].write("Oracle average: {:.4f} with std: {:.4f}\n".format(self._oracle_average_reward(), self._oracle_std()))
+                self.experiment_paths[name].write("{} avg: {:.4f} with std {:.4f}. Difference = {:.4f} and min = {:.4f}. Match score = {:.4f}\n".format(name, avg, std, diff, min_rollout,match_score))
 
 
     def fidelity(self):
@@ -95,10 +95,11 @@ class Evaluate:
             fid1 = sum([oa == policy.predict(np.array([oo]))[0] for oo, oa, _ in self.flattened_oracle_trace]) / len(self.flattened_oracle_trace)
             #fid2 = sum([oa == self.oracle.predict(np.array([oo]))[0] for oo, oa, _ in trace]) / len(trace)
             if(self.no_print == False):
-                print('{} fidelity in oracle trace {:.2f}'.format(name, (fid1)))
-            #print('{} fidelity in policy trace {:.2f}%'.format(name, (fid2 * 100)))
+                print('{} fidelity in oracle trace {:.4f}'.format(name, (fid1)))
+            #print('{} fidelity in policy trace {:.4f}%'.format(name, (fid2 * 100)))
             if(self.experiment != ""):
-                self.experiment_paths[name].write('{} fidelity in oracle trace {:.2f}\n'.format(name, (fid1)))
+                self.experiment_paths[name].write('{} fidelity in oracle trace {:.4f}\n'.format(name, (fid1)))
+
 
     def expected_depth(self):
         """Returns the expected depth of a decision of each policy"""
@@ -121,9 +122,34 @@ class Evaluate:
 
 
             if(self.no_print == False):
-                print('{} expected depth of decision {:.2f}'.format(name, np.mean(depths)))
+                print('{} expected depth of decision {:.4f}'.format(name, np.mean(depths)))
             if(self.experiment != ""):
-                self.experiment_paths[name].write('{} expected depth of decision {:.2f}\n'.format(name, np.mean(depths)))
+                self.experiment_paths[name].write('{} expected depth of decision {:.4f}\n'.format(name, np.mean(depths)))
+
+    def expected_depth_score(self):
+        """Returns the expected depth for taking an action divided by the max depth of the tree"""
+        for name, policy, trace in zip(self.policy_names, self.policies, self.flattened_policy_traces):
+
+            # convert obervations to numpy array
+            observations = np.array([oo for oo, _, _ in trace])
+
+            # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
+            try:
+                node_indicator = policy.tree.decision_path(observations).toarray()
+            except AttributeError: #simple policies don't have any trees so we are improvising this
+                node_indicator = np.ones((len(observations), 1))
+
+            # get the list of node_ids that are traversed by the samples
+            decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
+
+            # find the depth traversed by each sample
+            depths = list(map(lambda x: len(x)-1, decision_paths))
+
+            max_depth = policy.tree.tree_.max_depth
+            if(self.no_print == False):
+                print('{} expected depth score {:.4f}'.format(name, 1 - np.mean(depths)/max_depth)) #because a large ratio is bad. So we do 1 -
+            if(self.experiment != ""):
+                self.experiment_paths[name].write('{} expected depth score {:.4f}\n'.format(name, 1 - np.mean(depths)/max_depth))
 
 
 
@@ -167,9 +193,9 @@ class Evaluate:
                 feature_uniqueness_ratio.append(equi_nodes/depths_mod[i])
 
             if(self.no_print == False):
-                print('{} expected uniqueness ratio {:.2f}'.format(name, np.mean(feature_uniqueness_ratio)))
+                print('{} expected uniqueness ratio {:.4f}'.format(name, np.mean(feature_uniqueness_ratio)))
             if(self.experiment != ""):
-                self.experiment_paths[name].write('{} expected uniqueness ratio {:.2f}\n'.format(name, np.mean(feature_uniqueness_ratio)))
+                self.experiment_paths[name].write('{} expected uniqueness ratio {:.4f}\n'.format(name, np.mean(feature_uniqueness_ratio)))
 
     def getEffectiveFeaturesUsed(self, usage_counts):
         """Example: Assume there are two nodes with occurrence counts 10000 and 2. 1/np.mean() results in 1/5001. Now arr becomes [10000,2] * 1/5001
@@ -193,6 +219,18 @@ class Evaluate:
             if(self.experiment != ""):
                 self.experiment_paths[name].write('{} decision nodes used: {}\n'.format(name, n_nodes))
 
+    def node_counts_score(self):
+        for name,policy in zip(self.policy_names, self.policies):
+            try:
+                n_nodes = policy.tree.tree_.node_count
+            except AttributeError: #no tree for simple policy
+                n_nodes = 0
+            if(self.no_print == False):
+                print('{} node count score: {:.4f}'.format(name, 1/(1+n_nodes)))
+            if(self.experiment != ""):
+                self.experiment_paths[name].write('{} node count score: {:.4f}\n'.format(name, 1/(1+n_nodes))) #normalizes node count score between zero and one. 1 is good
+
+
     def tree_completeness_ratio(self):
         #Returns ratio of number of nodes to the max possible number of nodes. Smaller value is better
         for name,policy in zip(self.policy_names, self.policies):
@@ -204,11 +242,24 @@ class Evaluate:
             except AttributeError: #no tree for simple policy
                 completeness_ratio = 1.0
             if(self.no_print == False):
-                print("{} completeness ratio: {:.2f}".format(name,completeness_ratio))
+                print("{} completeness ratio: {:.4f}".format(name,completeness_ratio))
             if(self.experiment != ""):
-                self.experiment_paths[name].write("{} completeness ratio: {:.2f}\n".format(name,completeness_ratio))
+                self.experiment_paths[name].write("{} completeness ratio: {:.4f}\n".format(name,completeness_ratio))
 
-
+    def tree_completeness_ratio_score(self):
+        #Returns ratio of number of nodes to the max possible number of nodes. Smaller value is better
+        for name,policy in zip(self.policy_names, self.policies):
+            try:
+                n_nodes = policy.tree.tree_.node_count
+                max_depth = policy.tree.tree_.max_depth
+                max_nodes = (2**(max_depth+1)) - 1
+                completeness_ratio = n_nodes/max_nodes
+            except AttributeError: #no tree for simple policy
+                completeness_ratio = 1.0
+            if(self.no_print == False):
+                print("{} completeness ratio score: {:.4f}".format(name,1-completeness_ratio)) #this behaves similar to expected depth so 1 -
+            if(self.experiment != ""):
+                self.experiment_paths[name].write("{} completeness ratio score: {:.4f}\n".format(name,1-completeness_ratio))
 
 
     def feature_importance_score(self):
@@ -220,23 +271,37 @@ class Evaluate:
             except AttributeError:
                 fis = 0
             if(self.no_print == False):
-                print("{} has importance score {:.2f}".format(name, fis))
+                print("{} has importance score {:.4f}".format(name, fis))
             if(self.experiment != ""):
-                self.experiment_paths[name].write("{} has importance score {:.2f}\n".format(name, fis))
+                self.experiment_paths[name].write("{} has importance score {:.4f}\n".format(name, fis))
 
     def insignificant_leaves(self):
         for name, policy in zip(self.policy_names, self.policies):
             try:
-                max_sample = policy.tree.n_node_samples[0]
-                non_leaves = policy.tree.tree_.children_left != -1 != policy.tree.tree_.children_right
-                useless = policy.tree.n_node_samples[non_leaves] < max_sample * 0.01  # splits on less than 1 percent of samples are annoying
+                max_sample = policy.tree.tree_.n_node_samples[0]
+                useless = policy.tree.tree_.n_node_samples < max_sample * 0.01
+                non_leaves = np.concatenate((policy.tree.tree_.children_left != -1, policy.tree.tree_.children_right != -1))
             except AttributeError:
                 useless = 0
                 non_leaves = [1]
             if(self.no_print == False):
-                print("{} has {:.2f} insignificant splits".format(name, useless / np.sum(non_leaves)))
+                print("{} has {:.4f} insignificant splits".format(name, np.sum(useless) / np.sum(non_leaves)))
             if(self.experiment != ""):
-                self.experiment_paths[name].write("{} has {:.2f} insignificant splits\n".format(name, useless / np.sum(non_leaves)))
+                self.experiment_paths[name].write("{} has {:.4f} insignificant splits\n".format(name, np.sum(useless) / np.sum(non_leaves)))
+
+    def insignificant_leaves_score(self):
+        for name, policy in zip(self.policy_names, self.policies):
+            try:
+                max_sample = policy.tree.tree_.n_node_samples[0]
+                useless = policy.tree.tree_.n_node_samples < max_sample * 0.01
+                non_leaves = np.concatenate((policy.tree.tree_.children_left != -1, policy.tree.tree_.children_right != -1))
+            except AttributeError:
+                useless = 0
+                non_leaves = [1]
+            if(self.no_print == False):
+                print("{} has {:.4f} insignificant leaves score".format(name, 1 - (np.sum(useless) / np.sum(non_leaves)))) #1 - coz more insignificant leaves is bad
+            if(self.experiment != ""):
+                self.experiment_paths[name].write("{} has {:.4f} insignificant leaves score\n".format(name, 1 - (np.sum(useless) / np.sum(non_leaves))))
 
     def exact_feature_uniqueness(self):
         for name, policy in zip(self.policy_names, self.policies):
@@ -270,22 +335,35 @@ class Evaluate:
             except AttributeError:
                 uniques = [1]
             if(self.no_print == False):
-                print("{} had {:.2f} unique features in each path".format(name, np.average(uniques)))
+                print("{} had {:.4f} unique features in each path".format(name, np.average(uniques)))
             if(self.experiment != ""):
-                self.experiment_paths[name].write("{} had {:.2f} unique features in each path\n".format(name, np.average(uniques)))
+                self.experiment_paths[name].write("{} had {:.4f} unique features in each path\n".format(name, np.average(uniques)))
 
     def unnecessary_splits(self):
         for name, policy in zip(self.policy_names, self.policies):
             try:
                 if(self.no_print == False):
-                    print("{} could prune {:.2f} of nodes without reducing performance".format(name, self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count))
+                    print("{} could prune {:.4f} of nodes without reducing performance".format(name, self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} could prune {:.2f} of nodes without reducing performance\n".format(name, self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count))
+                    self.experiment_paths[name].write("{} could prune {:.4f} of nodes without reducing performance\n".format(name, self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count))
             except AttributeError:
                 if(self.no_print == False):
                     print("{} couldn't prune".format(name))
                 if(self.experiment != ""):
                     self.experiment_paths[name].write("{} couldn't prune\n".format(name))
+
+    def unnecessary_splits_score(self):
+        for name, policy in zip(self.policy_names, self.policies):
+            try:
+                if(self.no_print == False):
+                    print("{} unnecessary splits score: {:.4f}".format(name, 1 - (self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count)))
+                if(self.experiment != ""):
+                    self.experiment_paths[name].write("{} unnecessary splits score: {:.4f}\n".format(name, 1- (self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count)))
+            except AttributeError:
+                if(self.no_print == False):
+                    print("{} couldn't prune".format(name))
+                if(self.experiment != ""):
+                    pass #leave it
 
 
     def _unnecessary_splits(self, policy, node):
@@ -319,9 +397,31 @@ class Evaluate:
                     self.experiment_paths[name].write("{} has no repeating features\n".format(name))
             else:
                 if(self.no_print == False):
-                    print("{} has an average standard deviation of {:.2f} among repeating features (max {:.2f}, min {:.2f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    print("{} has an average standard deviation of {:.4f} among repeating features (max {:.4f}, min {:.4f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} has an average standard deviation of {:.2f} among repeating features (max {:.2f}, min {:.2f})\n".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    self.experiment_paths[name].write("{} has an average standard deviation of {:.4f} among repeating features (max {:.4f}, min {:.4f})\n".format(name, np.average(stds), np.max(stds), np.min(stds)))
+
+    def same_feature_value_differences_score(self):
+        for name, policy in zip(self.policy_names, self.policies):
+            try:
+                features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
+                stds = []
+                for f in np.unique(features):
+                    values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
+                    if values.size > 1:
+                        stds.append(np.std(values))
+            except AttributeError:
+                stds = [0]
+            if len(stds) == 0:
+                if(self.no_print == False):
+                    print("{} has no repeating features".format(name))
+                if(self.experiment != ""):
+                    pass
+            else:
+                if(self.no_print == False):
+                    print("{} feature value difference score: {:.4f})".format(name, np.average(stds)/np.max(stds)))
+                if(self.experiment != ""):
+                    self.experiment_paths[name].write("{} feature value difference score: {:.4f}\n".format(name, np.average(stds)/np.max(stds)))
 
     def same_value_differences_in_path(self):
         for name, policy in zip(self.policy_names, self.policies):
@@ -355,23 +455,66 @@ class Evaluate:
                     self.experiment_paths[name].write("{} has no repeating features\n".format(name))
             else:
                 if(self.no_print == False):
-                    print("{} has an average standard deviation of {:.2f} among repeating features in a path (max {:.2f}, min {:.2f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    print("{} has an average standard deviation of {:.4f} among repeating features in a path (max {:.4f}, min {:.4f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} has an average standard deviation of {:.2f} among repeating features in a path (max {:.2f}, min {:.2f})\n".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    self.experiment_paths[name].write("{} has an average standard deviation of {:.4f} among repeating features in a path (max {:.4f}, min {:.4f})\n".format(name, np.average(stds), np.max(stds), np.min(stds)))
+
+    def same_value_differences_in_path_score(self):
+        for name, policy in zip(self.policy_names, self.policies):
+            paths = [[0]]
+            stds = []
+            try:
+                while paths:
+                    cur = paths.pop()
+                    l = policy.tree.tree_.children_left[cur[-1]]
+                    r = policy.tree.tree_.children_right[cur[-1]]
+                    if (l == -1 == r):
+                        _features = policy.tree.tree_.feature[cur]
+                        features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
+                        for f in np.unique(features):
+                            values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
+                            if values.size > 1:
+                                stds.append(np.std(values))
+                    else:
+                        cur_ = cur.copy()
+                        cur.append(r)
+                        paths.append(cur)
+
+                        cur_.append(l)
+                        paths.append(cur_)
+            except AttributeError:
+                stds = [0]
+            if len(stds) == 0:
+                if(self.no_print == False):
+                    print("{} has no repeating features".format(name))
+                if(self.experiment != ""):
+                    pass
+            else:
+                if(self.no_print == False):
+                    print("{} path feature value difference score {:.4f}".format(name, np.average(stds)/np.max(stds)))
+                if(self.experiment != ""):
+                    self.experiment_paths[name].write("{} path feature value difference score {:.4f}".format(name, np.average(stds)/np.max(stds)))
 
 
     def evaluate(self,):
         self.play_performance()
         self.fidelity()
         self.expected_depth()
+        self.expected_depth_score()
         self.feature_uniqueness()
         self.node_counts()
+        self.node_counts_score()
         self.tree_completeness_ratio()
+        self.tree_completeness_ratio_score()
         self.feature_importance_score()
         self.insignificant_leaves()
+        self.insignificant_leaves_score()
         self.exact_feature_uniqueness()
         self.unnecessary_splits()
+        self.unnecessary_splits_score()
         self.same_feature_value_differences()
+        self.same_feature_value_differences_score()
         self.same_value_differences_in_path()
+        self.same_value_differences_in_path_score()
         for file in self.experiment_paths.values():
             file.close()
