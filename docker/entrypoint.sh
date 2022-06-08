@@ -3,13 +3,13 @@
 # Taken from https://github.com/openai/gym/
 
 set -ex
+display=2
 
 # Set up display; otherwise rendering will fail
-Xvfb :2 -screen 0 1024x768x24 &
-export DISPLAY=:2
+Xvfb :$display -screen 0 1024x768x24 &
+export DISPLAY=:$display
 
 # Wait for the file to come up
-display=2
 file="/tmp/.X11-unix/X$display"
 
 sleep 1

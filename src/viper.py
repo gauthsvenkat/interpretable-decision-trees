@@ -102,7 +102,7 @@ def train_viper(env, student, oracle, max_iters, n_rollouts, train_frac, max_sam
     qs.extend(oracle.predict_q(np.array([obs for obs, _, _ in trace])))
 
     for i in range(max_iters):
-        print('Iteration {}/{}'.format(i, max_iters))
+        print('Iteration {}/{}'.format(i+1, max_iters))
         # Train from subset of aggregated data
         cur_obss, cur_acts, cur_qs = _sample(np.array(obss), np.array(acts), np.array(qs), max_samples)
         print('Training student with {} points'.format(len(cur_obss)))
@@ -180,15 +180,22 @@ class ViperEnvConfig:
         )
 
 
-def get_student(env, oracle, train=True, save_path_specifier="",depth=-1):
-    dt_save_folder = Path('student', env.unwrapped.spec.id)
+def get_student(env, oracle, train=True, save_path_specifier="", depth=-1, optimal_tree=False, cp=None):
+    if optimal_tree:
+        if cp == None:
+            dt_save_folder = Path('student', env.unwrapped.spec.id+'-optimal_tree')
+        else:
+            dt_save_folder = Path('student', env.unwrapped.spec.id+'-optimal_tree-cp'+str(cp))
+    else:
+        dt_save_folder = Path('student', env.unwrapped.spec.id)
+
     os.makedirs(str(dt_save_folder), exist_ok=True)
     config = ViperEnvConfig.get_viper_config(env.unwrapped.spec.id)
     if(depth != -1):
         config.student_max_depth = depth
     
     if train:
-        student = DTPolicy(config.student_max_depth)
+        student = DTPolicy(config.student_max_depth, optimal_tree=optimal_tree, cp=cp)
         student, _ = train_viper(env, student, oracle, config.viper_max_iters, config.viper_max_rollouts,
                                  config.viper_train_frac, config.viper_max_samples, config.viper_n_test_rollouts)
         student.save_dt_policy(Path(dt_save_folder, 'policy{}.pk'.format(save_path_specifier)))
