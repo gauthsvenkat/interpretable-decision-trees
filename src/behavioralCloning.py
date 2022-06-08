@@ -7,11 +7,14 @@ from src.DTPolicy import DTPolicy
 from src.viper import get_rollouts, ViperEnvConfig
 
 
-def get_student(env, oracle, train=True, save_path_specifier="", depth=-1, optimal_tree=False):
+def get_student(env, oracle, train=True, save_path_specifier="", depth=-1, optimal_tree=False, cp=None):
     n_rollouts = 200
 
     if optimal_tree:
-        dt_save_folder = Path('bc', env.unwrapped.spec.id+'-optimal_tree')
+        if cp == None:
+            dt_save_folder = Path('bc', env.unwrapped.spec.id+'-optimal_tree')
+        else:
+            dt_save_folder = Path('bc', env.unwrapped.spec.id+'-optimal_tree-cp'+str(cp))
     else:
         dt_save_folder = Path('bc', env.unwrapped.spec.id)
 
@@ -25,7 +28,7 @@ def get_student(env, oracle, train=True, save_path_specifier="", depth=-1, optim
         trace = get_rollouts(env, oracle, n_rollouts)
         obss = np.array([obs for obs, _, _ in trace])
         acts = np.array([act for _, act, _ in trace])
-        student = DTPolicy(config.student_max_depth, optimal_tree=optimal_tree)
+        student = DTPolicy(config.student_max_depth, optimal_tree=optimal_tree, cp=cp)
         print("Training Behavioral Cloning tree with {} points".format(len(obss)))
 
         student.train(obss, acts, config.viper_train_frac)

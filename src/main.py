@@ -28,8 +28,8 @@ def main(args):
     env.reset()
 
     oracle = Baseline.BaselineOracle(env_name, specifier="")
-    student = viper.get_student(env, oracle, train=True, save_path_specifier=args.student_path, depth=args.max_depth, optimal_tree=args.optimal_tree)
-    bc = behavioralCloning.get_student(env, oracle, train=True, save_path_specifier=args.bc_path, depth=args.max_depth, optimal_tree=args.optimal_tree)
+    student = viper.get_student(env, oracle, train=True, save_path_specifier=args.student_path, depth=args.max_depth, optimal_tree=args.optimal_tree, cp=args.cp)
+    bc = behavioralCloning.get_student(env, oracle, train=True, save_path_specifier=args.bc_path, depth=args.max_depth, optimal_tree=args.optimal_tree, cp=args.cp)
 
     if env_name == 'MountainCar-v0':
         simple = SimpleMCDT()
@@ -50,6 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--student_path',type=str, help='the policy name for the generated student tree. Use something like _depth_<VALUE>')
     parser.add_argument('--bc_path',type=str, help='the policy name for the generated bc tree. Use something like _depth_<VALUE>')
     parser.add_argument('--optimal_tree', action='store_true', help='Play the environment with the generated policies')
+    parser.add_argument('--cp', type=int, default=0, help='The cp for the generated optimal tree')
 
     args = parser.parse_args()
     main(args)
