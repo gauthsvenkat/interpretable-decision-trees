@@ -50,7 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--student_path',type=str, help='the policy name for the generated student tree. Use something like _depth_<VALUE>')
     parser.add_argument('--bc_path',type=str, help='the policy name for the generated bc tree. Use something like _depth_<VALUE>')
     parser.add_argument('--optimal_tree', action='store_true', help='Play the environment with the generated policies')
-    parser.add_argument('--cp', type=int, default=0, help='The cp for the generated optimal tree')
+    parser.add_argument('--cp', type=float, default=0, help='The cp for the generated optimal tree')
 
     args = parser.parse_args()
     main(args)
