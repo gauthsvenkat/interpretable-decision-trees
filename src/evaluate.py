@@ -384,10 +384,12 @@ class Evaluate:
             try:
                 features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
                 stds = []
+                scores = []
                 for f in np.unique(features):
                     values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
                     if values.size > 1:
                         stds.append(np.std(values))
+                        scores.append(np.std(values)/(np.max(values) - np.min(values))) #additional domain info use
             except AttributeError:
                 stds = [0]
             if len(stds) == 0:
@@ -397,19 +399,22 @@ class Evaluate:
                     self.experiment_paths[name].write("{} has no repeating features\n".format(name))
             else:
                 if(self.no_print == False):
-                    print("{} has an average standard deviation of {:.4f} among repeating features (max {:.4f}, min {:.4f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    print("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} has an average standard deviation of {:.4f} among repeating features (max {:.4f}, min {:.4f})\n".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    self.experiment_paths[name].write("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
+
 
     def same_feature_value_differences_score(self):
         for name, policy in zip(self.policy_names, self.policies):
             try:
                 features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
                 stds = []
+                scores = []
                 for f in np.unique(features):
                     values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
                     if values.size > 1:
                         stds.append(np.std(values))
+                        scores.append(np.std(values)/(np.max(values) - np.min(values))) #additional domain info use
             except AttributeError:
                 stds = [0]
             if len(stds) == 0:
@@ -419,14 +424,15 @@ class Evaluate:
                     pass
             else:
                 if(self.no_print == False):
-                    print("{} feature value difference score: {:.4f})".format(name, np.average(stds)/np.max(stds)))
+                    print("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} feature value difference score: {:.4f}\n".format(name, np.average(stds)/np.max(stds)))
+                    self.experiment_paths[name].write("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
 
     def same_value_differences_in_path(self):
         for name, policy in zip(self.policy_names, self.policies):
             paths = [[0]]
             stds = []
+            scores = []
             try:
                 while paths:
                     cur = paths.pop()
@@ -439,6 +445,7 @@ class Evaluate:
                             values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
                             if values.size > 1:
                                 stds.append(np.std(values))
+                                scores.append(np.std(values)/(np.max(values) - np.min(values))) #additional domain info use
                     else:
                         cur_ = cur.copy()
                         cur.append(r)
@@ -455,14 +462,19 @@ class Evaluate:
                     self.experiment_paths[name].write("{} has no repeating features\n".format(name))
             else:
                 if(self.no_print == False):
-                    print("{} has an average standard deviation of {:.4f} among repeating features in a path (max {:.4f}, min {:.4f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    print("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
+#                     print("{} path feature value difference score {:.4f}".format(name, np.average(stds)/np.max(stds)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} has an average standard deviation of {:.4f} among repeating features in a path (max {:.4f}, min {:.4f})\n".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    self.experiment_paths[name].write("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
+#                     self.experiment_paths[name].write("{} path feature value difference score {:.4f}".format(name, np.average(stds)/np.max(stds)))
+
+
 
     def same_value_differences_in_path_score(self):
         for name, policy in zip(self.policy_names, self.policies):
             paths = [[0]]
             stds = []
+            scores = []
             try:
                 while paths:
                     cur = paths.pop()
@@ -475,6 +487,7 @@ class Evaluate:
                             values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
                             if values.size > 1:
                                 stds.append(np.std(values))
+                                scores.append(np.std(values)/(np.max(values) - np.min(values))) #additional domain info use
                     else:
                         cur_ = cur.copy()
                         cur.append(r)
@@ -491,9 +504,11 @@ class Evaluate:
                     pass
             else:
                 if(self.no_print == False):
-                    print("{} path feature value difference score {:.4f}".format(name, np.average(stds)/np.max(stds)))
+#                     print("{} path feature value difference score {:.4f}".format(name, np.average(stds)/np.max(stds)))
+                    print("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} path feature value difference score {:.4f}".format(name, np.average(stds)/np.max(stds)))
+                    self.experiment_paths[name].write("{} path feature value difference score {:.4f}".format(name, np.average(scores)))
+
 
 
     def evaluate(self,):
