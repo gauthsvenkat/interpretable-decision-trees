@@ -21,6 +21,9 @@ class Evaluate:
         self.policy_traces = [get_rollouts_as_list_of_lists(env, p, n_rollouts) for p in self.policies]
         self.oracle_trace = get_rollouts_as_list_of_lists(env, oracle, n_rollouts)
 
+        flat_obs = [obs for obs, _, _ in trace for trace in self.flattened_policy_traces]
+        self.estimated_domains = list(zip(np.min(flat_obs, axis=0), np.min(flat_obs, axis=0)))
+
     def _policy_average_rewards(self):
         avgs = []
         for trace in self.flattened_policy_traces:
@@ -151,23 +154,24 @@ class Evaluate:
     def feature_importance_score(self):
         # It's better to have a few important features and not or barely use the others, users only need to keep the important ones in mind
         for name, policy in zip(self.policy_names, self.policies):
-            # if there are little important features, 1-(importance) will have mostly high values so their product will be high
+            # if the importance is concentrated over little features, they will have relatively high importance and thus low (1-importance)
+            # this means the product of all (1-importance)s will be quite low
             try:
-                fis = np.prod(1-policy.tree.tree_.compute_feature_importances())
+                fis = 1 - np.prod(1-policy.tree.tree_.compute_feature_importances())
             except AttributeError:
                 fis = 0
             print("{} has importance score {}".format(name, fis))
 
-    def insignificant_leaves(self):
+    def insignificant_splits_ratio(self):
         for name, policy in zip(self.policy_names, self.policies):
             try:
-                max_sample = policy.tree.n_node_samples[0]
-                non_leaves = policy.tree.tree_.children_left != -1 != policy.tree.tree_.children_right
-                useless = policy.tree.n_node_samples[non_leaves] < max_sample * 0.01  # splits on less than 1 percent of samples are annoying
+                max_sample = policy.tree.tree_.n_node_samples[0]
+                non_leaves = policy.tree.tree_.children_left != -1
+                useless = policy.tree.tree_.n_node_samples[non_leaves] < max_sample * 0.01  # splits on less than 1 percent of samples are annoying
             except AttributeError:
                 useless = 0
                 non_leaves = [1]
-            print("{} has {}% insignificant splits".format(name, 100 * useless / np.sum(non_leaves)))
+            print("{} has {}% significant splits".format(name, 100 * (1 - useless / np.sum(non_leaves))))
 
     def exact_feature_uniqueness(self):
         for name, policy in zip(self.policy_names, self.policies):
@@ -179,7 +183,7 @@ class Evaluate:
                     l = policy.tree.tree_.children_left[cur[-1]]
                     r = policy.tree.tree_.children_right[cur[-1]]
                     if (l == -1 == r):
-                        uniques.append(np.unique(cur).size / cur.size)
+                        uniques.append(np.unique(policy.tree.tree_.feature[cur]).size / cur.size)
                     else:
                         cur_ = cur.copy()
                         cur.append(r)
@@ -193,8 +197,9 @@ class Evaluate:
 
     def unnecessary_splits(self):
         for name, policy in zip(self.policy_names, self.policies):
+            non_leaves = policy.tree.tree_.children_left != -1
             try:
-                print("{} could prune {}% of nodes without reducing performance".format(name, 100 * self._unnecessary_splits(policy, 0)[2] / policy.tree.tree_.node_count))
+                print("{} needs {}% of nodes to model current behaviour".format(name, 100 * (1 - self._unnecessary_splits(policy, 0)[2] / np.sum(non_leaves))))
             except AttributeError:
                 print("{} couldn't prune".format(name))
 
@@ -212,23 +217,8 @@ class Evaluate:
 
         return True, lc, ln+rn+1
 
-    def same_feature_value_differences(self):
-        for name, policy in zip(self.policy_names, self.policies):
-            try:
-                features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
-                stds = []
-                for f in np.unique(features):
-                    values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
-                    if values.size > 1:
-                        stds.append(np.std(values))
-            except AttributeError:
-                stds = [0]
-            if len(stds) == 0:
-                print("{} has no repeating features".format(name))
-            else:
-                print("{} has an average standard deviation of {} among repeating features (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
 
-    def same_value_differences_in_path(self):
+    def same_feature_threshold_differences_in_path(self):
         for name, policy in zip(self.policy_names, self.policies):
             paths = [[0]]
             stds = []
@@ -239,11 +229,17 @@ class Evaluate:
                     r = policy.tree.tree_.children_right[cur[-1]]
                     if (l == -1 == r):
                         _features = policy.tree.tree_.feature[cur]
-                        features = policy.tree.tree_.feature[policy.tree.tree_.feature >= 0]
-                        for f in np.unique(features):
+                        for f in np.unique(_features[_features >= 0]):
                             values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
                             if values.size > 1:
-                                stds.append(np.std(values))
+                                values.sort()
+                                domain = self.estimated_domains[f]
+                                values = np.insert(np.insert(values, values.size, domain[1]), 0, domain[0])  # add bounds
+                                diffs = np.abs(values[1:] - values[:-1])  # differences between neighbors
+                                # the best case scenario is if all differences are domain/(num_thresholds + 1). Multiplying should thus give (domain/(num_thresholds + 1))^num_thresholds
+                                # by seeing how far it is from this value we get an idea of how badly they're distributed. Note that an uneven distribution inherently causes the result to be lower
+                                # this can be calculated by multiplying all (diff*(num_thresholds+1) / domain)
+                                stds.append(np.prod(diffs * diffs.size / (domain[1] - domain[0])))
                     else:
                         cur_ = cur.copy()
                         cur.append(r)
@@ -256,7 +252,43 @@ class Evaluate:
             if len(stds) == 0:
                 print("{} has no repeating features".format(name))
             else:
-                print("{} has an average standard deviation of {} among repeating features in a path (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                print("{} has an average threshold score of {} among repeating features in a path (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+
+
+    def same_feature_threshold_differences_in_trace(self):
+        for name, policy, trace in zip(self.policy_names, self.policies, self.flattened_policy_traces):
+            try:
+                for t in trace:
+                    observations = np.array([oo for oo, _, _ in trace])
+
+                    # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
+                    try:
+                        node_indicator = policy.tree.decision_path(observations).toarray()
+                    except AttributeError: #simple policies don't have any trees so we are improvising this
+                        node_indicator = np.ones((len(observations), 1))
+
+                    # get the list of node_ids that are traversed by the samples
+                    decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
+
+                    for d in decision_paths:
+                        _features = policy.tree.tree_.feature[decision_paths]
+                        for f in np.unique(_features[_features >= 0]):
+                            values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
+                            if values.size > 1:
+                                values.sort()
+                                domain = self.estimated_domains[f]
+                                values = np.insert(np.insert(values, values.size, domain[1]), 0, domain[0])  # add bounds
+                                diffs = np.abs(values[1:] - values[:-1])  # differences between neighbors
+                                # the best case scenario is if all differences are domain/(num_thresholds + 1). Multiplying should thus give (domain/(num_thresholds + 1))^num_thresholds
+                                # by seeing how far it is from this value we get an idea of how badly they're distributed. Note that an uneven distribution inherently causes the result to be lower
+                                # this can be calculated by multiplying all (diff*(num_thresholds+1) / domain)
+                                stds.append(np.prod(diffs * diffs.size / (domain[1] - domain[0])))
+            except AttributeError:
+                stds = [0]
+            if len(stds) == 0:
+                print("{} has no repeating features".format(name))
+            else:
+                print("{} has an average threshold score of {} among repeating features in a path (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
 
 
     def evaluate(self):
@@ -267,8 +299,8 @@ class Evaluate:
         self.node_counts()
         self.tree_completeness_ratio()
         self.feature_importance_score()
-        self.insignificant_leaves()
+        self.insignificant_splits_ratio()
         self.exact_feature_uniqueness()
         self.unnecessary_splits()
-        self.same_feature_value_differences()
-        self.same_value_differences_in_path()
+        self.same_feature_threshold_differences_in_trace()
+        self.same_feature_threshold_differences_in_path()
