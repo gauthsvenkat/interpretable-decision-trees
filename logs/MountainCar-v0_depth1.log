@@ -1,0 +1,244 @@
+Executing in the docker (cpu image):
+python -m src.main --optimal_tree --max_depth 1 --env_name MountainCar-v0 --student_path _depth_1 --bc_path _depth_1
+WARNING: Published ports are discarded when using host network mode
++ display=2
++ export DISPLAY=:2
++ DISPLAY=:2
++ file=/tmp/.X11-unix/X2
++ sleep 1
++ Xvfb :2 -screen 0 1024x768x24
+++ seq 1 10
++ for i in $(seq 1 10)
++ '[' -e /tmp/.X11-unix/X2 ']'
++ break
++ '[' -e /tmp/.X11-unix/X2 ']'
++ exec bash -c 'cd /root/code/rl_zoo/ && python -m src.main --optimal_tree --max_depth 1 --env_name MountainCar-v0 --student_path _depth_1 --bc_path _depth_1'
+/usr/local/lib/python3.5/site-packages/tensorflow/python/framework/dtypes.py:519: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/usr/local/lib/python3.5/site-packages/tensorflow/python/framework/dtypes.py:520: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/usr/local/lib/python3.5/site-packages/tensorflow/python/framework/dtypes.py:521: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/usr/local/lib/python3.5/site-packages/tensorflow/python/framework/dtypes.py:522: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/usr/local/lib/python3.5/site-packages/tensorflow/python/framework/dtypes.py:523: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/usr/local/lib/python3.5/site-packages/tensorflow/python/framework/dtypes.py:528: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+DQN/MountainCar-v0.pkl
+Loading a model without an environment, this model cannot be trained until it has a valid environment.
+Iteration 1/20
+Training student with 13438 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.9736744186046512
+Test accuracy: 0.9773065476190477
+Number of nodes: 3
+Student reward: -154.05
+Iteration 2/20
+Training student with 28843 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                   12%|█▉              |  ETA: 0:00:01[39m[K[32mTraining trees...                   24%|███▉            |  ETA: 0:00:01[39m[K[32mTraining trees...                   37%|█████▉          |  ETA: 0:00:01[39m[K[32mTraining trees...                   50%|████████        |  ETA: 0:00:00[39m[K[32mTraining trees...                   64%|██████████▎     |  ETA: 0:00:00[39m[K[32mTraining trees...                   77%|████████████▍   |  ETA: 0:00:00[39m[K[32mTraining trees...                   91%|██████████████▌ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:00[39m[K
+[?25hTrain accuracy: 0.9550143018115628
+Test accuracy: 0.9505980239209568
+Number of nodes: 3
+Student reward: -128.88
+Iteration 3/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    8%|█▎              |  ETA: 0:00:01[39m[K[32mTraining trees...                   17%|██▊             |  ETA: 0:00:01[39m[K[32mTraining trees...                   26%|████▏           |  ETA: 0:00:01[39m[K[32mTraining trees...                   35%|█████▋          |  ETA: 0:00:01[39m[K[32mTraining trees...                   44%|███████         |  ETA: 0:00:01[39m[K[32mTraining trees...                   54%|████████▋       |  ETA: 0:00:01[39m[K[32mTraining trees...                   63%|██████████▏     |  ETA: 0:00:00[39m[K[32mTraining trees...                   72%|███████████▌    |  ETA: 0:00:00[39m[K[32mTraining trees...                   82%|█████████████▏  |  ETA: 0:00:00[39m[K[32mTraining trees...                   92%|██████████████▊ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.934875
+Test accuracy: 0.93525
+Number of nodes: 3
+Student reward: -140.66
+Iteration 4/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    9%|█▌              |  ETA: 0:00:01[39m[K[32mTraining trees...                   18%|██▉             |  ETA: 0:00:01[39m[K[32mTraining trees...                   27%|████▍           |  ETA: 0:00:01[39m[K[32mTraining trees...                   36%|█████▊          |  ETA: 0:00:01[39m[K[32mTraining trees...                   45%|███████▎        |  ETA: 0:00:01[39m[K[32mTraining trees...                   54%|████████▋       |  ETA: 0:00:01[39m[K[32mTraining trees...                   63%|██████████▏     |  ETA: 0:00:00[39m[K[32mTraining trees...                   72%|███████████▌    |  ETA: 0:00:00[39m[K[32mTraining trees...                   81%|█████████████   |  ETA: 0:00:00[39m[K[32mTraining trees...                   90%|██████████████▍ |  ETA: 0:00:00[39m[K[32mTraining trees...                   99%|███████████████▉|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.93271875
+Test accuracy: 0.934375
+Number of nodes: 3
+Student reward: -144.4
+Iteration 5/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    8%|█▎              |  ETA: 0:00:01[39m[K[32mTraining trees...                   17%|██▊             |  ETA: 0:00:01[39m[K[32mTraining trees...                   26%|████▏           |  ETA: 0:00:01[39m[K[32mTraining trees...                   35%|█████▋          |  ETA: 0:00:01[39m[K[32mTraining trees...                   44%|███████         |  ETA: 0:00:01[39m[K[32mTraining trees...                   53%|████████▌       |  ETA: 0:00:01[39m[K[32mTraining trees...                   62%|█████████▉      |  ETA: 0:00:00[39m[K[32mTraining trees...                   71%|███████████▍    |  ETA: 0:00:00[39m[K[32mTraining trees...                   80%|████████████▊   |  ETA: 0:00:00[39m[K[32mTraining trees...                   89%|██████████████▎ |  ETA: 0:00:00[39m[K[32mTraining trees...                   98%|███████████████▋|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.9300625
+Test accuracy: 0.929
+Number of nodes: 3
+Student reward: -132.3
+Iteration 6/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    8%|█▎              |  ETA: 0:00:01[39m[K[32mTraining trees...                   16%|██▌             |  ETA: 0:00:01[39m[K[32mTraining trees...                   24%|███▉            |  ETA: 0:00:01[39m[K[32mTraining trees...                   32%|█████▏          |  ETA: 0:00:01[39m[K[32mTraining trees...                   41%|██████▌         |  ETA: 0:00:01[39m[K[32mTraining trees...                   50%|████████        |  ETA: 0:00:01[39m[K[32mTraining trees...                   59%|█████████▌      |  ETA: 0:00:01[39m[K[32mTraining trees...                   68%|██████████▉     |  ETA: 0:00:00[39m[K[32mTraining trees...                   77%|████████████▍   |  ETA: 0:00:00[39m[K[32mTraining trees...                   86%|█████████████▊  |  ETA: 0:00:00[39m[K[32mTraining trees...                   95%|███████████████▎|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.92671875
+Test accuracy: 0.926375
+Number of nodes: 3
+Student reward: -168.34
+Iteration 7/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                   10%|█▋              |  ETA: 0:00:01[39m[K[32mTraining trees...                   19%|███             |  ETA: 0:00:01[39m[K[32mTraining trees...                   28%|████▌           |  ETA: 0:00:01[39m[K[32mTraining trees...                   38%|██████▏         |  ETA: 0:00:01[39m[K[32mTraining trees...                   47%|███████▌        |  ETA: 0:00:01[39m[K[32mTraining trees...                   57%|█████████▏      |  ETA: 0:00:00[39m[K[32mTraining trees...                   66%|██████████▌     |  ETA: 0:00:00[39m[K[32mTraining trees...                   76%|████████████▏   |  ETA: 0:00:00[39m[K[32mTraining trees...                   85%|█████████████▋  |  ETA: 0:00:00[39m[K[32mTraining trees...                   94%|███████████████ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.9285
+Test accuracy: 0.931125
+Number of nodes: 3
+Student reward: -129.11
+Iteration 8/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    9%|█▌              |  ETA: 0:00:01[39m[K[32mTraining trees...                   18%|██▉             |  ETA: 0:00:01[39m[K[32mTraining trees...                   27%|████▍           |  ETA: 0:00:01[39m[K[32mTraining trees...                   36%|█████▊          |  ETA: 0:00:01[39m[K[32mTraining trees...                   45%|███████▎        |  ETA: 0:00:01[39m[K[32mTraining trees...                   54%|████████▋       |  ETA: 0:00:01[39m[K[32mTraining trees...                   64%|██████████▎     |  ETA: 0:00:00[39m[K[32mTraining trees...                   74%|███████████▉    |  ETA: 0:00:00[39m[K[32mTraining trees...                   83%|█████████████▎  |  ETA: 0:00:00[39m[K[32mTraining trees...                   92%|██████████████▊ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.9274375
+Test accuracy: 0.92525
+Number of nodes: 3
+Student reward: -141.89
+Iteration 9/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    9%|█▌              |  ETA: 0:00:01[39m[K[32mTraining trees...                   18%|██▉             |  ETA: 0:00:01[39m[K[32mTraining trees...                   28%|████▌           |  ETA: 0:00:01[39m[K[32mTraining trees...                   37%|█████▉          |  ETA: 0:00:01[39m[K[32mTraining trees...                   47%|███████▌        |  ETA: 0:00:01[39m[K[32mTraining trees...                   57%|█████████▏      |  ETA: 0:00:00[39m[K[32mTraining trees...                   66%|██████████▌     |  ETA: 0:00:00[39m[K[32mTraining trees...                   75%|████████████    |  ETA: 0:00:00[39m[K[32mTraining trees...                   84%|█████████████▌  |  ETA: 0:00:00[39m[K[32mTraining trees...                   94%|███████████████ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.924125
+Test accuracy: 0.92675
+Number of nodes: 3
+Student reward: -138.79
+Iteration 10/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    9%|█▌              |  ETA: 0:00:01[39m[K[32mTraining trees...                   18%|██▉             |  ETA: 0:00:01[39m[K[32mTraining trees...                   27%|████▍           |  ETA: 0:00:01[39m[K[32mTraining trees...                   35%|█████▋          |  ETA: 0:00:01[39m[K[32mTraining trees...                   44%|███████         |  ETA: 0:00:01[39m[K[32mTraining trees...                   53%|████████▌       |  ETA: 0:00:01[39m[K[32mTraining trees...                   62%|█████████▉      |  ETA: 0:00:00[39m[K[32mTraining trees...                   71%|███████████▍    |  ETA: 0:00:00[39m[K[32mTraining trees...                   80%|████████████▊   |  ETA: 0:00:00[39m[K[32mTraining trees...                   89%|██████████████▎ |  ETA: 0:00:00[39m[K[32mTraining trees...                   98%|███████████████▋|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.92446875
+Test accuracy: 0.924125
+Number of nodes: 3
+Student reward: -134.35
+Iteration 11/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    5%|▊               |  ETA: 0:00:02[39m[K[32mTraining trees...                   10%|█▋              |  ETA: 0:00:02[39m[K[32mTraining trees...                   15%|██▍             |  ETA: 0:00:02[39m[K[32mTraining trees...                   20%|███▎            |  ETA: 0:00:02[39m[K[32mTraining trees...                   25%|████            |  ETA: 0:00:02[39m[K[32mTraining trees...                   30%|████▊           |  ETA: 0:00:02[39m[K[32mTraining trees...                   35%|█████▋          |  ETA: 0:00:02[39m[K[32mTraining trees...                   40%|██████▍         |  ETA: 0:00:01[39m[K[32mTraining trees...                   45%|███████▎        |  ETA: 0:00:01[39m[K[32mTraining trees...                   50%|████████        |  ETA: 0:00:01[39m[K[32mTraining trees...                   55%|████████▊       |  ETA: 0:00:01[39m[K[32mTraining trees...                   60%|█████████▋      |  ETA: 0:00:01[39m[K[32mTraining trees...                   65%|██████████▍     |  ETA: 0:00:01[39m[K[32mTraining trees...                   70%|███████████▎    |  ETA: 0:00:01[39m[K[32mTraining trees...                   75%|████████████    |  ETA: 0:00:01[39m[K[32mTraining trees...                   80%|████████████▊   |  ETA: 0:00:00[39m[K[32mTraining trees...                   85%|█████████████▋  |  ETA: 0:00:00[39m[K[32mTraining trees...                   90%|██████████████▍ |  ETA: 0:00:00[39m[K[32mTraining trees...                   95%|███████████████▎|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:02[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:02[39m[K
+[?25hTrain accuracy: 0.924625
+Test accuracy: 0.927875
+Number of nodes: 3
+Student reward: -167.04
+Iteration 12/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    5%|▊               |  ETA: 0:00:02[39m[K[32mTraining trees...                   10%|█▋              |  ETA: 0:00:02[39m[K[32mTraining trees...                   16%|██▌             |  ETA: 0:00:02[39m[K[32mTraining trees...                   22%|███▌            |  ETA: 0:00:02[39m[K[32mTraining trees...                   28%|████▌           |  ETA: 0:00:01[39m[K[32mTraining trees...                   34%|█████▌          |  ETA: 0:00:01[39m[K[32mTraining trees...                   40%|██████▍         |  ETA: 0:00:01[39m[K[32mTraining trees...                   46%|███████▍        |  ETA: 0:00:01[39m[K[32mTraining trees...                   52%|████████▍       |  ETA: 0:00:01[39m[K[32mTraining trees...                   58%|█████████▎      |  ETA: 0:00:01[39m[K[32mTraining trees...                   64%|██████████▎     |  ETA: 0:00:01[39m[K[32mTraining trees...                   70%|███████████▎    |  ETA: 0:00:01[39m[K[32mTraining trees...                   76%|████████████▏   |  ETA: 0:00:00[39m[K[32mTraining trees...                   82%|█████████████▏  |  ETA: 0:00:00[39m[K[32mTraining trees...                   88%|██████████████▏ |  ETA: 0:00:00[39m[K[32mTraining trees...                   94%|███████████████ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.92375
+Test accuracy: 0.923
+Number of nodes: 3
+Student reward: -141.32
+Iteration 13/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                   10%|█▋              |  ETA: 0:00:01[39m[K[32mTraining trees...                   21%|███▍            |  ETA: 0:00:01[39m[K[32mTraining trees...                   31%|█████           |  ETA: 0:00:01[39m[K[32mTraining trees...                   39%|██████▎         |  ETA: 0:00:01[39m[K[32mTraining trees...                   49%|███████▉        |  ETA: 0:00:01[39m[K[32mTraining trees...                   59%|█████████▌      |  ETA: 0:00:00[39m[K[32mTraining trees...                   69%|███████████     |  ETA: 0:00:00[39m[K[32mTraining trees...                   79%|████████████▋   |  ETA: 0:00:00[39m[K[32mTraining trees...                   89%|██████████████▎ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.91853125
+Test accuracy: 0.921875
+Number of nodes: 3
+Student reward: -142.99
+Iteration 14/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    9%|█▌              |  ETA: 0:00:01[39m[K[32mTraining trees...                   18%|██▉             |  ETA: 0:00:01[39m[K[32mTraining trees...                   27%|████▍           |  ETA: 0:00:01[39m[K[32mTraining trees...                   36%|█████▊          |  ETA: 0:00:01[39m[K[32mTraining trees...                   45%|███████▎        |  ETA: 0:00:01[39m[K[32mTraining trees...                   54%|████████▋       |  ETA: 0:00:01[39m[K[32mTraining trees...                   63%|██████████▏     |  ETA: 0:00:00[39m[K[32mTraining trees...                   72%|███████████▌    |  ETA: 0:00:00[39m[K[32mTraining trees...                   81%|█████████████   |  ETA: 0:00:00[39m[K[32mTraining trees...                   90%|██████████████▍ |  ETA: 0:00:00[39m[K[32mTraining trees...                   99%|███████████████▉|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.92546875
+Test accuracy: 0.919625
+Number of nodes: 3
+Student reward: -144.3
+Iteration 15/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                   10%|█▋              |  ETA: 0:00:01[39m[K[32mTraining trees...                   20%|███▎            |  ETA: 0:00:01[39m[K[32mTraining trees...                   30%|████▊           |  ETA: 0:00:01[39m[K[32mTraining trees...                   40%|██████▍         |  ETA: 0:00:01[39m[K[32mTraining trees...                   50%|████████        |  ETA: 0:00:01[39m[K[32mTraining trees...                   60%|█████████▋      |  ETA: 0:00:00[39m[K[32mTraining trees...                   71%|███████████▍    |  ETA: 0:00:00[39m[K[32mTraining trees...                   82%|█████████████▏  |  ETA: 0:00:00[39m[K[32mTraining trees...                   92%|██████████████▊ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.92153125
+Test accuracy: 0.92625
+Number of nodes: 3
+Student reward: -134.13
+Iteration 16/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                   10%|█▋              |  ETA: 0:00:01[39m[K[32mTraining trees...                   20%|███▎            |  ETA: 0:00:01[39m[K[32mTraining trees...                   30%|████▊           |  ETA: 0:00:01[39m[K[32mTraining trees...                   40%|██████▍         |  ETA: 0:00:01[39m[K[32mTraining trees...                   50%|████████        |  ETA: 0:00:01[39m[K[32mTraining trees...                   60%|█████████▋      |  ETA: 0:00:00[39m[K[32mTraining trees...                   70%|███████████▎    |  ETA: 0:00:00[39m[K[32mTraining trees...                   81%|█████████████   |  ETA: 0:00:00[39m[K[32mTraining trees...                   91%|██████████████▌ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.9183125
+Test accuracy: 0.9235
+Number of nodes: 3
+Student reward: -135.85
+Iteration 17/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    8%|█▎              |  ETA: 0:00:01[39m[K[32mTraining trees...                   17%|██▊             |  ETA: 0:00:01[39m[K[32mTraining trees...                   26%|████▏           |  ETA: 0:00:01[39m[K[32mTraining trees...                   35%|█████▋          |  ETA: 0:00:01[39m[K[32mTraining trees...                   44%|███████         |  ETA: 0:00:01[39m[K[32mTraining trees...                   53%|████████▌       |  ETA: 0:00:01[39m[K[32mTraining trees...                   62%|█████████▉      |  ETA: 0:00:00[39m[K[32mTraining trees...                   71%|███████████▍    |  ETA: 0:00:00[39m[K[32mTraining trees...                   80%|████████████▊   |  ETA: 0:00:00[39m[K[32mTraining trees...                   89%|██████████████▎ |  ETA: 0:00:00[39m[K[32mTraining trees...                   98%|███████████████▋|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.92225
+Test accuracy: 0.92125
+Number of nodes: 3
+Student reward: -162.79
+Iteration 18/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    9%|█▌              |  ETA: 0:00:01[39m[K[32mTraining trees...                   18%|██▉             |  ETA: 0:00:01[39m[K[32mTraining trees...                   27%|████▍           |  ETA: 0:00:01[39m[K[32mTraining trees...                   37%|█████▉          |  ETA: 0:00:01[39m[K[32mTraining trees...                   47%|███████▌        |  ETA: 0:00:01[39m[K[32mTraining trees...                   57%|█████████▏      |  ETA: 0:00:00[39m[K[32mTraining trees...                   67%|██████████▊     |  ETA: 0:00:00[39m[K[32mTraining trees...                   77%|████████████▍   |  ETA: 0:00:00[39m[K[32mTraining trees...                   87%|█████████████▉  |  ETA: 0:00:00[39m[K[32mTraining trees...                   97%|███████████████▌|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.923
+Test accuracy: 0.926625
+Number of nodes: 3
+Student reward: -135.27
+Iteration 19/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                   10%|█▋              |  ETA: 0:00:01[39m[K[32mTraining trees...                   20%|███▎            |  ETA: 0:00:01[39m[K[32mTraining trees...                   30%|████▊           |  ETA: 0:00:01[39m[K[32mTraining trees...                   40%|██████▍         |  ETA: 0:00:01[39m[K[32mTraining trees...                   49%|███████▉        |  ETA: 0:00:01[39m[K[32mTraining trees...                   58%|█████████▎      |  ETA: 0:00:00[39m[K[32mTraining trees...                   67%|██████████▊     |  ETA: 0:00:00[39m[K[32mTraining trees...                   76%|████████████▏   |  ETA: 0:00:00[39m[K[32mTraining trees...                   85%|█████████████▋  |  ETA: 0:00:00[39m[K[32mTraining trees...                   94%|███████████████ |  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.921625
+Test accuracy: 0.92075
+Number of nodes: 3
+Student reward: -138.86
+Iteration 20/20
+Training student with 40000 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                    8%|█▎              |  ETA: 0:00:01[39m[K[32mTraining trees...                   16%|██▌             |  ETA: 0:00:01[39m[K[32mTraining trees...                   25%|████            |  ETA: 0:00:01[39m[K[32mTraining trees...                   34%|█████▌          |  ETA: 0:00:01[39m[K[32mTraining trees...                   43%|██████▉         |  ETA: 0:00:01[39m[K[32mTraining trees...                   52%|████████▍       |  ETA: 0:00:01[39m[K[32mTraining trees...                   61%|█████████▊      |  ETA: 0:00:00[39m[K[32mTraining trees...                   70%|███████████▎    |  ETA: 0:00:00[39m[K[32mTraining trees...                   79%|████████████▋   |  ETA: 0:00:00[39m[K[32mTraining trees...                   88%|██████████████▏ |  ETA: 0:00:00[39m[K[32mTraining trees...                   97%|███████████████▌|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:01[39m[K
+[?25hTrain accuracy: 0.920625
+Test accuracy: 0.919375
+Number of nodes: 3
+Student reward: -144.19
+Initial policy count: 20
+Current policy count: 10
+Reward update: -128.88 -> -134.86
+Reward update: -129.11 -> -135.87
+Reward update: -132.3 -> -134.98
+Reward update: -134.13 -> -142.93
+Reward update: -134.35 -> -141.02
+Reward update: -135.27 -> -135.2
+Reward update: -135.85 -> -130.96
+Reward update: -138.79 -> -139.1
+Reward update: -138.86 -> -131.13
+Reward update: -140.66 -> -137.44
+Current policy count: 5
+Reward update: -130.96 -> -133.58
+Reward update: -131.13 -> -134.55
+Reward update: -134.86 -> -139.21
+Reward update: -134.98 -> -140.2
+Reward update: -135.2 -> -136.16
+Current policy count: 3
+Reward update: -133.58 -> -141.57
+Reward update: -134.55 -> -133.03
+Reward update: -136.16 -> -137.72
+Current policy count: 2
+Reward update: -133.03 -> -139.3
+Reward update: -137.72 -> -140.75
+Current policy count: 1
+Reward update: -139.3 -> -130.83
+Training Behavioral Cloning tree with 27008 points
+[?25l[32mTraining trees...                    0%|                |  ETA: N/A[39m[K[32mTraining trees...                   12%|█▉              |  ETA: 0:00:01[39m[K[32mTraining trees...                   23%|███▋            |  ETA: 0:00:01[39m[K[32mTraining trees...                   35%|█████▋          |  ETA: 0:00:01[39m[K[32mTraining trees...                   47%|███████▌        |  ETA: 0:00:00[39m[K[32mTraining trees...                   59%|█████████▌      |  ETA: 0:00:00[39m[K[32mTraining trees...                   72%|███████████▌    |  ETA: 0:00:00[39m[K[32mTraining trees...                   84%|█████████████▌  |  ETA: 0:00:00[39m[K[32mTraining trees...                   96%|███████████████▍|  ETA: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:00[39m[K[32mTraining trees...                  100%|████████████████| Time: 0:00:00[39m[K
+[?25hTrain accuracy: 0.9043784134036842
+Test accuracy: 0.9083672713809701
+Number of nodes: 3
+getting 200 rollouts
+Oracle average: -129.17 with std: 27.408595367147147
+Student avg: -135.725 with std 33.56813034710155. Difference = 6.555000000000007 and min = -182.0
+Bc avg: -135.78 with std 32.947103059297945. Difference = 6.610000000000014 and min = -182.0
+Simple avg: -119.04 with std 3.7733804472912613. Difference = -10.129999999999981 and min = -125.0
+Student fidelity in oracle trace 91.00797398776805%
+Student fidelity in policy trace 81.2783201326211%
+Bc fidelity in oracle trace 91.04668266625377%
+Bc fidelity in policy trace 80.3063779643541%
+Simple fidelity in oracle trace 88.79383757838507%
+Simple fidelity in policy trace 72.2698252688172%
+Student expected depth of decision 1.0
+Bc expected depth of decision 1.0
+Simple expected depth of decision 0.0
+Student expected uniqueness ratio 1.0
+Bc expected uniqueness ratio 1.0
+Simple expected uniqueness ratio 0.0
+Student decision nodes used: 3
+Bc decision nodes used: 3
+Simple decision nodes used: 0
+Student completeness ratio: 1.0
+Bc completeness ratio: 1.0
+Simple completeness ratio: 1.0
+Student has importance score 0.0
+Bc has importance score 0.0
+Simple has importance score 0
+Student has 0.0% insignificant splits
+Bc has 0.0% insignificant splits
+Simple has 0.0% insignificant splits
+Student had 100.0% unique features in each path
+Bc had 100.0% unique features in each path
+Simple had 100.0% unique features in each path
+Student could prune 0.0% of nodes without reducing performance
+Bc could prune 0.0% of nodes without reducing performance
+Simple couldn't prune
+Student has no repeating features
+Bc has no repeating features
+Simple has an average standard deviation of 0.0 among repeating features (max 0, min 0)
+Student has no repeating features
+Bc has no repeating features
+Simple has an average standard deviation of 0.0 among repeating features in a path (max 0, min 0)
+None
+./scripts/run_docker.sh: line 22: kill: (229159) - No such process
