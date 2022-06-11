@@ -45,6 +45,13 @@ class DTPolicy:
         return iclf
 
 
+        # if optimal tree, then fit an optimal tree classifier and perform model surgery on the sklearn fitted tree
+        if self.optimal_tree:
+            iclf = self._train_optimal_tree(obss, acts)
+            iclf_state = self._extract_optimal_tree_state(iclf, obss, acts)
+            self._perform_model_surgery(iclf_state)
+
+
     def train(self, obss, acts, train_frac):
         obss_train, acts_train, obss_test, acts_test = split_train_test(obss, acts, train_frac)
         self.tree = DecisionTreeClassifier(max_depth=self.max_depth)
@@ -84,7 +91,6 @@ class DTPolicy:
             right_child = iclf.get_upper_child(node_idx) - 1
             feature = int(iclf.get_split_feature(node_idx).replace('x', '')) - 1
             threshold = iclf.get_split_threshold(node_idx)
-        
         #get all the unique classes, not just the ones in the node
         all_classes = np.unique(y_train)
 
@@ -115,12 +121,12 @@ class DTPolicy:
             nodes.append(node)
             values.append(value)
 
-        nodes = np.array(nodes, dtype=[('left_child', '<i8'), 
-                                       ('right_child', '<i8'), 
-                                       ('feature', '<i8'), 
-                                       ('threshold', '<f8'), 
-                                       ('impurity', '<f8'), 
-                                       ('n_node_samples', '<i8'), 
+        nodes = np.array(nodes, dtype=[('left_child', '<i8'),
+                                       ('right_child', '<i8'),
+                                       ('feature', '<i8'),
+                                       ('threshold', '<f8'),
+                                       ('impurity', '<f8'),
+                                       ('n_node_samples', '<i8'),
                                        ('weighted_n_node_samples', '<f8')])
         values = np.array(values)
 
@@ -142,7 +148,6 @@ class DTPolicy:
         #get a new Tree() object and set its state to the optimal tree's state
         donor_tree_object = tree._tree.Tree(n_features, n_classes, n_outputs)
         donor_tree_object.__setstate__(iclf_state)
-        
         #transplant (hopefully) successful
         self.tree.tree_ = donor_tree_object
 
