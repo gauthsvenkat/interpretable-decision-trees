@@ -1,0 +1,16 @@
+Oracle average: -137.8100 with std: 22.0030
+Student avg: -137.5900 with std 28.8379. Difference = -0.2200 and min = -171.0000. Match score = 0.8698
+Student fidelity in oracle trace 0.9274
+Student expected depth of decision 2.0000
+Student expected depth score 0.0000
+Student expected uniqueness ratio 1.0000
+Student decision nodes used: 7
+Student node count score: 0.1250
+Student completeness ratio: 1.0000
+Student completeness ratio score: 0.0000
+Student has importance score 0.9349
+Student has 1.0000 significant splits
+Student had 0.6667 unique features in each path
+Student needs 1.0000 of nodes to maintain performance
+Student has an average threshold score of 0.6316 among repeating features in a path
+Student has an average threshold score of 0.6316 among repeating features in a trace

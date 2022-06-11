@@ -13,7 +13,7 @@ from scipy.stats import norm
 
 class Evaluate:
 
-    def __init__(self, env, oracle, policies, n_rollouts=500, policy_names=None, experiment="", no_print=False, optimal = False):
+    def __init__(self, env, oracle, policies, n_rollouts=500, policy_names=None, experiment="", no_print=False, optimal = False, cp=0):
         self.env = env
         self.policies = policies
         self.oracle = oracle
@@ -29,7 +29,7 @@ class Evaluate:
         env_name = env.unwrapped.spec.id
         if(self.experiment != ""):#you want to save the results
             if(optimal):
-                pth = "experiments/"+env_name+"-optimal"+"/"
+                pth = "experiments/"+env_name+"-optimal-cp"+str(cp)+"/"
             else:
                 pth = "experiments/"+env_name+"/"
             isExist = os.path.exists(pth)
@@ -38,10 +38,11 @@ class Evaluate:
             for policy in self.policy_names:
                 self.experiment_paths[policy] = open(pth+policy+"_rollouts_"+str(self.n_rollouts)+"_"+self.experiment+".txt","w")
 
-
-
-        flat_obs = [obs for obs, _, _ in trace for trace in self.flattened_policy_traces]
-        self.estimated_domains = list(zip(np.min(flat_obs, axis=0), np.min(flat_obs, axis=0)))
+        flat_obs = []
+        for trace in self.flattened_policy_traces:
+            for obs,_,_ in trace:
+                flat_obs.append(obs)
+        self.estimated_domains = list(zip(np.min(flat_obs, axis=0), np.max(flat_obs, axis=0)))
 
     def _policy_average_rewards(self):
         avgs = []
@@ -197,9 +198,16 @@ class Evaluate:
                 feature_uniqueness_ratio.append(equi_nodes/depths_mod[i])
 
             if(self.no_print == False):
-                print('{} expected uniqueness ratio {:.4f}'.format(name, np.mean(feature_uniqueness_ratio)))
+                if(np.mean(feature_uniqueness_ratio) == 0):
+                    print('{} expected uniqueness ratio {:.4f}'.format(name, 1.0))
+                else:
+                    print('{} expected uniqueness ratio {:.4f}'.format(name, np.mean(feature_uniqueness_ratio)))
+
             if(self.experiment != ""):
-                self.experiment_paths[name].write('{} expected uniqueness ratio {:.4f}\n'.format(name, np.mean(feature_uniqueness_ratio)))
+                if(np.mean(feature_uniqueness_ratio) == 0):
+                        self.experiment_paths[name].write('{} expected uniqueness ratio {:.4f}\n'.format(name, 1.0))
+                else:
+                    self.experiment_paths[name].write('{} expected uniqueness ratio {:.4f}\n'.format(name, np.mean(feature_uniqueness_ratio)))
 
     def getEffectiveFeaturesUsed(self, usage_counts):
         """Example: Assume there are two nodes with occurrence counts 10000 and 2. 1/np.mean() results in 1/5001. Now arr becomes [10000,2] * 1/5001
@@ -290,9 +298,15 @@ class Evaluate:
                 useless = 0
                 non_leaves = [1]
             if(self.no_print == False):
-                print("{} has {:.4f} significant splits".format(name, 1 - np.sum(useless) / np.sum(non_leaves)))
+                if(np.sum(non_leaves) == 0):
+                    print("{} has {:.4f} significant splits".format(name, 1.0))
+                else:
+                    print("{} has {:.4f} significant splits".format(name, 1 - np.sum(useless) / np.sum(non_leaves)))
             if(self.experiment != ""):
-                self.experiment_paths[name].write("{} has {:.4f} significant splits\n".format(name, 1 - np.sum(useless) / np.sum(non_leaves)))
+                if(np.sum(non_leaves) == 0):
+                        self.experiment_paths[name].write("{} has {:.4f} significant splits\n".format(name, 1.0))
+                else:
+                    self.experiment_paths[name].write("{} has {:.4f} significant splits\n".format(name, 1 - np.sum(useless) / np.sum(non_leaves)))
 
     def exact_feature_uniqueness(self):
         for name, policy in zip(self.policy_names, self.policies):
@@ -328,16 +342,25 @@ class Evaluate:
             if(self.no_print == False):
                 print("{} had {:.4f} unique features in each path".format(name, np.average(uniques)))
             if(self.experiment != ""):
-                self.experiment_paths[name].write("{} had {:.4f} unique features in each path\n".format(name, np.average(uniques)))
+                if(np.average(uniques) == 0):
+                        self.experiment_paths[name].write("{} had {:.4f} unique features in each path\n".format(name, 1.0))
+                else:
+                    self.experiment_paths[name].write("{} had {:.4f} unique features in each path\n".format(name, np.average(uniques)))
 
     def unnecessary_splits(self):
         for name, policy in zip(self.policy_names, self.policies):
             try:
                 non_leaves = policy.tree.tree_.children_left != -1
                 if(self.no_print == False):
-                    print("{} needs {:.4f} of nodes to maintain performance".format(name, 1 - (self._unnecessary_splits(policy, 0)[2] / np.sum(non_leaves))))
+                    if(np.sum(non_leaves) == 0):
+                        print("{} needs {:.4f} of nodes to maintain performance".format(name, 1.0))
+                    else:
+                        print("{} needs {:.4f} of nodes to maintain performance".format(name, 1 - (self._unnecessary_splits(policy, 0)[2] / np.sum(non_leaves))))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} needs {:.4f} of nodes to maintain performance\n".format(name, 1 - (self._unnecessary_splits(policy, 0)[2] / np.sum(non_leaves))))
+                    if(np.sum(non_leaves) == 0):
+                        self.experiment_paths[name].write("{} needs {:.4f} of nodes to maintain performance\n".format(name, 1.0))
+                    else:
+                        self.experiment_paths[name].write("{} needs {:.4f} of nodes to maintain performance\n".format(name, 1 - (self._unnecessary_splits(policy, 0)[2] / np.sum(non_leaves))))
             except AttributeError:
                 if(self.no_print == False):
                     print("{} couldn't prune".format(name))
@@ -393,54 +416,54 @@ class Evaluate:
                 if(self.no_print == False):
                     print("{} has no repeating features".format(name))
                 if(self.experiment != ""):
-                    pass
+                    self.experiment_paths[name].write("{} has an average threshold score of {:.4f} among repeating features in a path\n".format(name, 1.0))
             else:
                 if(self.no_print == False):
-                    print("{} has an average threshold score of {} among repeating features in a path (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    print("{} has an average threshold score of {:.4f} among repeating features in a path (max {:.4f}, min {:.4f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} has an average threshold score of {:.4f} among repeating features in a path".format(name, np.average(stds)))
+                    self.experiment_paths[name].write("{} has an average threshold score of {:.4f} among repeating features in a path\n".format(name, np.average(stds)))
 
 
     def same_feature_threshold_differences_in_trace(self):
         for name, policy, trace in zip(self.policy_names, self.policies, self.flattened_policy_traces):
+            stds = []
             try:
-                for t in trace:
-                    observations = np.array([oo for oo, _, _ in trace])
+                observations = np.array([oo for oo, _, _ in trace])
 
-                    # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
-                    try:
-                        node_indicator = policy.tree.decision_path(observations).toarray()
-                    except AttributeError: #simple policies don't have any trees so we are improvising this
-                        node_indicator = np.ones((len(observations), 1))
+                # returns a matrix of size (n_samples, n_nodes) with 1 if the sample traversed the node
+                try:
+                    node_indicator = policy.tree.tree_.decision_path(observations).toarray()
+                except AttributeError: #simple policies don't have any trees so we are improvising this
+                    node_indicator = np.ones((len(observations), 1))
 
-                    # get the list of node_ids that are traversed by the samples
-                    decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
+                # get the list of node_ids that are traversed by the samples
+                decision_paths = list(map(lambda x: np.where(x == 1)[0], node_indicator))
 
-                    for d in decision_paths:
-                        _features = policy.tree.tree_.feature[decision_paths]
-                        for f in np.unique(_features[_features >= 0]):
-                            values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
-                            if values.size > 1:
-                                values.sort()
-                                domain = self.estimated_domains[f]
-                                values = np.insert(np.insert(values, values.size, domain[1]), 0, domain[0])  # add bounds
-                                diffs = np.abs(values[1:] - values[:-1])  # differences between neighbors
-                                # the best case scenario is if all differences are domain/(num_thresholds + 1). Multiplying should thus give (domain/(num_thresholds + 1))^num_thresholds
-                                # by seeing how far it is from this value we get an idea of how badly they're distributed. Note that an uneven distribution inherently causes the result to be lower
-                                # this can be calculated by multiplying all (diff*(num_thresholds+1) / domain)
-                                stds.append(np.prod(diffs * diffs.size / (domain[1] - domain[0])))
+                for d in decision_paths:
+                    _features = policy.tree.tree_.feature[d]
+                    for f in np.unique(_features[_features >= 0]):
+                        values = policy.tree.tree_.threshold[policy.tree.tree_.feature == f]
+                        if values.size > 1:
+                            values.sort()
+                            domain = self.estimated_domains[f]
+                            values = np.insert(np.insert(values, values.size, domain[1]), 0, domain[0])  # add bounds
+                            diffs = np.abs(values[1:] - values[:-1])  # differences between neighbors
+                            # the best case scenario is if all differences are domain/(num_thresholds + 1). Multiplying should thus give (domain/(num_thresholds + 1))^num_thresholds
+                            # by seeing how far it is from this value we get an idea of how badly they're distributed. Note that an uneven distribution inherently causes the result to be lower
+                            # this can be calculated by multiplying all (diff*(num_thresholds+1) / domain)
+                            stds.append(np.prod(diffs * diffs.size / (domain[1] - domain[0])))
             except AttributeError:
                 stds = [0]
             if len(stds) == 0:
                 if(self.no_print == False):
                     print("{} has no repeating features".format(name))
                 if(self.experiment != ""):
-                    pass
+                    self.experiment_paths[name].write("{} has an average threshold score of {:.4f} among repeating features in a trace\n".format(name, 1.0))
             else:
                 if(self.no_print == False):
-                    print("{} has an average threshold score of {} among repeating features in a trace (max {}, min {})".format(name, np.average(stds), np.max(stds), np.min(stds)))
+                    print("{} has an average threshold score of {:.4f} among repeating features in a trace (max {:.4f}, min {:.4f})".format(name, np.average(stds), np.max(stds), np.min(stds)))
                 if(self.experiment != ""):
-                    self.experiment_paths[name].write("{} has an average threshold score of {:.4f} among repeating features in a trace".format(name, np.average(stds)))
+                    self.experiment_paths[name].write("{} has an average threshold score of {:.4f} among repeating features in a trace\n".format(name, np.average(stds)))
 
 
 
