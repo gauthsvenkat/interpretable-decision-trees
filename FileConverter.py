@@ -97,9 +97,9 @@ else:
     if("acrobot" in args.env.lower()):
         path += "Acrobot-v1-optimal-cp"+args.complexity+"/"
     elif("mountaincar" in args.env.lower()):
-        path += "MountainCar-v0"+args.complexity+"/"
+        path += "MountainCar-v0-optimal-cp"+args.complexity+"/"
     elif("cartpole" in args.env.lower()):
-        path += "CartPole-v1"+args.complexity+"/"
+        path += "CartPole-v1-optimal-cp"+args.complexity+"/"
 
 filepaths = []
 

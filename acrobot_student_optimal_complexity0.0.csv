@@ -1,6 +1,0 @@
-depth,rewards match score,fidelity,expected depth score,empirical uniqueness ratio,exact uniqueness ratio,node count score,completeness ratio score,importance score,significant splits score,useful nodes,path threshold score,trace threshold score,overall interpretability score,overall match score,combined score
-1,0.8218,0.8186,0.0,1.0,0.5,0.25,0.0,1.0,1.0,1.0,1.0,1.0,0.725,0.8202,0.7726
-2,0.7374,0.8463,0.0,1.0,0.6667,0.125,0.0,0.8617,1.0,1.0,1.0,1.0,0.7987,0.7919,0.7953
-3,0.9387,0.8719,0.0,0.9031,0.5833,0.0625,0.0,0.7181,1.0,1.0,0.4529,0.5431,0.768,0.9053,0.8366
-4,0.5476,0.8534,0.0,0.95,0.7125,0.0312,0.0,0.76,0.9333,1.0,0.0714,0.0644,0.781,0.7005,0.7408
-5,0.6024,0.8839,0.0724,0.6577,0.6183,0.0161,0.0317,0.7719,0.8333,1.0,0.1555,0.1365,0.8675,0.7431,0.8053
